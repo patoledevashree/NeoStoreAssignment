@@ -2,7 +2,27 @@ import React from 'react'
 import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { Formik } from 'formik';
+import * as yup from 'yup';
 
+const validationSchema = yup.object({
+    oldPwd: yup
+        .string()
+        .min(8, 'Password is too short - should be 8 chars minimum.')
+        .required()
+        .matches('^[a-zA-Z0-9_]*$', 'Password can only contain alphanumeric.'),
+    newPwd: yup
+        .string()
+        .min(8, 'Password is too short - should be 8 chars minimum.')
+        .required()
+        .matches('^[a-zA-Z0-9_]*$', 'Password can only contain alphanumeric.'),
+    crfmPwd: yup
+        .string()
+        .required()
+        .oneOf(
+            [yup.ref('password'), null],
+            'Passwords must match',
+        ),
+})
 
 export default function ChangePassword() {
     return (
@@ -13,6 +33,7 @@ export default function ChangePassword() {
                     newPwd: '',
                     crfmPwd: ''
                 }}
+                validationSchema={validationSchema}
                 onSubmit={(values) => {
                     console.log(values)
                 }}
