@@ -99,7 +99,7 @@ export default function Product() {
                             return (
                                 <View key={index} style={{ backgroundColor: '#e7e7e7', marginBottom: 5, marginTop: 5 }}>
                                     <View style={styles.cardWrapper}>
-                                        <TouchableOpacity onPress={()=>{navigation.navigate('ProductDetail')}}>
+                                        <TouchableOpacity onPress={()=>{navigation.navigate('ProductDetail',{title:item.title})}}>
                                             <View style={styles.card}>
                                                 <View style={styles.cardImgWrapper}>
                                                     <ImageBackground

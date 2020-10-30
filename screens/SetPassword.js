@@ -11,6 +11,7 @@ import {
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const validationschema = yup.object({
     otp: yup
@@ -70,92 +71,95 @@ export default function ForgetPassword() {
         <TouchableWithoutFeedback onPress={() => {
             Keyboard.dismiss();
         }}>
-            <View style={styles.container}>
-                <Text style={styles.text}>
-                    Neo<Text style={{ color: '#2874F0' }}>Store</Text>
-                </Text>
-                <Formik
-                    initialValues={{
-                        otp: '',
-                        password: '',
-                        confirmPwd: ''
-                    }}
-                    validationSchema={validationschema}
-                    onSubmit={(values) => {
-                        console.log(values)
-                    }}
-                >
-                    {(props) => (
-                        <View>
+            <ScrollView>
+                <View style={styles.container}>
+                    <Text style={styles.text}>
+                        Neo<Text style={{ color: '#2874F0' }}>Store</Text>
+                    </Text>
+                    <Formik
+                        initialValues={{
+                            otp: '',
+                            password: '',
+                            confirmPwd: ''
+                        }}
+                        validationSchema={validationschema}
+                        onSubmit={(values) => {
+                            console.log(values)
+                        }}
+                    >
+                        {(props) => (
                             <View>
-                                <FontAwesome style={{ position: 'relative', top: 35, left: 15 }}
-                                    name='key' size={20}
-                                />
+                                <View>
+                                    <FontAwesome style={{ position: 'relative', top: 35, left: 15 }}
+                                        name='key' size={20}
+                                    />
 
-                                <TextInput style={styles.input}
-                                    placeholder='Enter OTP'
-                                    onChangeText={props.handleChange('otp')}
-                                    value={props.values.otp}
-                                    onBlur={props.handleBlur('otp')}
-                                />
-                                <Text style={styles.error}>
-                                    {props.touched.otp && props.errors.otp}
-                                </Text>
-                            </View>
-                            <View >
-                                <FontAwesome style={{ position: 'relative', top: 35, left: 15 }}
-                                    name='lock' size={20}
-                                />
-
-                                <TextInput style={styles.input}
-                                    placeholder='New Password'
-                                    secureTextEntry={securePwd}
-                                    onChangeText={props.handleChange('password')}
-                                    value={props.values.password}
-                                    onBlur={props.handleBlur('password')}
-                                />
-                                <FontAwesome style={{ position: 'absolute', top: 35, right: 5 }}
-                                    name={pwd_eyeStyle} size={20}
-                                    onPress={handlePwdClick}
-                                />
-                                <Text style={styles.error}>
-                                    {props.touched.password && props.errors.password}
-                                </Text>
-                            </View>
-
-                            <View >
-                                <FontAwesome style={{ position: 'relative', top: 35, left: 15 }}
-                                    name='lock' size={20}
-                                />
-
-                                <TextInput style={styles.input}
-                                    placeholder='Confirm Password'
-                                    secureTextEntry={secureCrfm}
-                                    onChangeText={props.handleChange('confirmPwd')}
-                                    value={props.values.confirmPwd}
-                                    onBlur={props.handleBlur('confirmPwd')}
-                                />
-                                <FontAwesome style={{ position: 'absolute', top: 35, right: 5 }}
-                                    name={crf_eyeStyle} size={20}
-                                    onPress={handleClick}
-                                />
-                                <Text style={styles.error}>
-                                    {props.touched.confirmPwd && props.errors.confirmPwd}
-                                </Text>
-                            </View>
-                            <TouchableOpacity onPress={props.handleSubmit}>
-                                <View style={styles.button}>
-                                    <Text style={{
-                                        color: 'white', fontSize: 20, textAlign: 'center', padding: 5
-                                    }}>
-                                        Submit</Text>
+                                    <TextInput style={styles.input}
+                                        keyboardType='numeric'
+                                        placeholder='Enter OTP'
+                                        onChangeText={props.handleChange('otp')}
+                                        value={props.values.otp}
+                                        onBlur={props.handleBlur('otp')}
+                                    />
+                                    <Text style={styles.error}>
+                                        {props.touched.otp && props.errors.otp}
+                                    </Text>
                                 </View>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                </Formik>
+                                <View >
+                                    <FontAwesome style={{ position: 'relative', top: 35, left: 15 }}
+                                        name='lock' size={20}
+                                    />
 
-            </View>
+                                    <TextInput style={styles.input}
+                                        placeholder='New Password'
+                                        secureTextEntry={securePwd}
+                                        onChangeText={props.handleChange('password')}
+                                        value={props.values.password}
+                                        onBlur={props.handleBlur('password')}
+                                    />
+                                    <FontAwesome style={{ position: 'absolute', top: 35, right: 5 }}
+                                        name={pwd_eyeStyle} size={20}
+                                        onPress={handlePwdClick}
+                                    />
+                                    <Text style={styles.error}>
+                                        {props.touched.password && props.errors.password}
+                                    </Text>
+                                </View>
+
+                                <View >
+                                    <FontAwesome style={{ position: 'relative', top: 35, left: 15 }}
+                                        name='lock' size={20}
+                                    />
+
+                                    <TextInput style={styles.input}
+                                        placeholder='Confirm Password'
+                                        secureTextEntry={secureCrfm}
+                                        onChangeText={props.handleChange('confirmPwd')}
+                                        value={props.values.confirmPwd}
+                                        onBlur={props.handleBlur('confirmPwd')}
+                                    />
+                                    <FontAwesome style={{ position: 'absolute', top: 35, right: 5 }}
+                                        name={crf_eyeStyle} size={20}
+                                        onPress={handleClick}
+                                    />
+                                    <Text style={styles.error}>
+                                        {props.touched.confirmPwd && props.errors.confirmPwd}
+                                    </Text>
+                                </View>
+                                <TouchableOpacity onPress={props.handleSubmit}>
+                                    <View style={styles.button}>
+                                        <Text style={{
+                                            color: 'white', fontSize: 20, textAlign: 'center', padding: 5
+                                        }}>
+                                            Submit</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </Formik>
+
+                </View>
+            </ScrollView>
         </TouchableWithoutFeedback>
     )
 }

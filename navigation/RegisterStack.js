@@ -36,7 +36,7 @@ export default function RegisterStack() {
                         <Icon.Button name="ios-menu" size={30} color='white' backgroundColor={'#2874F0'}
                             onPress={() => navigation.openDrawer()}></Icon.Button>)
                 }} />
-                 <Stack.Screen name='Login' component={LoginStack}
+                 {/* <Stack.Screen name='Login' component={LoginStack}
                 options={{
                     title: 'Login',
                     headerStyle: {
@@ -47,7 +47,7 @@ export default function RegisterStack() {
                         marginLeft:80,
                         fontSize: 25
                     },
-                }} />
+                }} /> */}
 
         </Stack.Navigator>
     )

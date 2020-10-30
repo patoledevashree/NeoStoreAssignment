@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Image, Button, TouchableOpacity, Alert, Snapsho
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 
 
 /**
@@ -57,47 +57,55 @@ export default function Dashboard() {
                     {cartItem.map((item, index) => {
                         return (
                             <Formik
-                            initialValues={{quantity:1}}
-                            onSubmit={(values)=>{
+                                initialValues={{ quantity: 1 }}
+                                onSubmit={(values) => {
 
-                            }}
+                                }}
                             >
-                                {(props)=>(
+                                {(props) => (
                                     <View key={index} style={styles.card}>
-                                    <View style={styles.cardImgWrapper}>
-                                        <Image
-                                            source={require('../assests/images/bed.png')}
-                                            resizeMode='cover'
-                                            style={styles.cardImg}
-                                        />
-                                    </View>
-                                    <View style={styles.cardInfo}>
-                                        <Text style={styles.cardTitle}>{item.product_name}</Text>
-                                        <Text style={styles.cardDetail}>Quantity : {props.values.quantity}</Text>
-                                        <Text style={{ ...styles.cardDetail, color: '#eb9800' }}>{'\u20B9'}{item.product_cost}</Text>
-    
-                                        <View style={{ flexDirection: 'row', left: 100, marginTop: 5 }}>
-    
-                                            <TouchableOpacity onPress={() => { props.setFieldValue('quantity',props.values.quantity+1) }}>
-                                                <Text style={styles.countButton}>+</Text>
-                                            </TouchableOpacity>
-    
-                                            <Text style={styles.countButton}>{props.values.quantity}</Text>
-    
-                                            <TouchableOpacity onPress={() => { props.setFieldValue('quantity',props.values.quantity-1) }}>
-                                                <Text style={styles.countButton}>-</Text>
-                                            </TouchableOpacity>
+                                        <View style={styles.cardImgWrapper}>
+                                            <Image
+                                                source={require('../assests/images/bed.png')}
+                                                resizeMode='cover'
+                                                style={styles.cardImg}
+                                            />
                                         </View>
-                                        <View style={styles.icon} >
-                                            <TouchableOpacity onPress={() => { removeItem() }}>
-                                                <FontAwesome name='times' size={15}
-                                                    color={'#444'}
-                                                    style={{ padding: 5 }}
-                                                />
-                                            </TouchableOpacity>
+                                        <View style={styles.cardInfo}>
+                                            <Text style={styles.cardTitle}>{item.product_name}</Text>
+                                            <Text style={styles.cardDetail}>Quantity : {props.values.quantity}</Text>
+                                            <Text style={{ ...styles.cardDetail, color: '#eb9800' }}>{'\u20B9'}{item.product_cost}</Text>
+
+                                            <View style={{ flexDirection: 'row', left: 100, marginTop: 5 }}>
+
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        props.values.quantity < 5 ? props.setFieldValue('quantity', props.values.quantity + 1) :
+                                                            Toast.show('Limit Exceeded')
+                                                    }}>
+                                                    <Text style={styles.countButton}>+</Text>
+                                                </TouchableOpacity>
+
+                                                <Text style={styles.countButton}>{props.values.quantity}</Text>
+
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        props.values.quantity > 1 ? props.setFieldValue('quantity', props.values.quantity - 1) :
+                                                        Toast.show('Quantity must be 1')
+                                                    }}>
+                                                    <Text style={styles.countButton}>-</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={styles.icon} >
+                                                <TouchableOpacity onPress={() => { removeItem() }}>
+                                                    <FontAwesome name='times' size={15}
+                                                        color={'#444'}
+                                                        style={{ padding: 5 }}
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
                                 )}
                             </Formik>
                         )
@@ -106,19 +114,19 @@ export default function Dashboard() {
                     <View style={{
                         flexDirection: "row",
                         marginHorizontal: 20,
-                        justifyContent:'space-between'
+                        justifyContent: 'space-between'
                     }}>
                         <View>
-                            <Text style={{fontWeight:'bold',fontSize:18}}>Sub Total:</Text>
-                            <Text style={{fontWeight:'bold',fontSize:18}}>Delivery Charges :</Text>
-                            <Text style={{fontWeight:'bold',fontSize:18}}>GST(10%)</Text>
-                            <Text style={{fontWeight:'bold',fontSize:18}}>ToTal Amount</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Sub Total:</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>Delivery Charges :</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>GST(10%)</Text>
+                            <Text style={{ fontWeight: 'bold', fontSize: 18 }}>ToTal Amount</Text>
                         </View>
-                        <View style={{paddingRight:10}}>
-                            <Text style={{fontSize:18}}>{'\u20B9'} 2,000</Text>
-                            <Text style={{fontSize:18}} >{'\u20B9'} 200</Text>
-                            <Text style={{fontSize:18}}>{'\u20B9'} 20</Text>
-                            <Text style={{fontSize:18}}> {'\u20B9'} 2220</Text>
+                        <View style={{ paddingRight: 10 }}>
+                            <Text style={{ fontSize: 18 }}>{'\u20B9'} 2,000</Text>
+                            <Text style={{ fontSize: 18 }} >{'\u20B9'} 200</Text>
+                            <Text style={{ fontSize: 18 }}>{'\u20B9'} 20</Text>
+                            <Text style={{ fontSize: 18 }}> {'\u20B9'} 2220</Text>
                         </View>
                     </View>
                 </View>
@@ -139,7 +147,7 @@ const styles = StyleSheet.create({
     container: {
         marginVertical: 10,
         marginHorizontal: 20,
-        marginBottom:70
+        marginBottom: 70
     },
     cardWrapper: {
         width: '90%',
@@ -214,10 +222,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderTopWidth: 1,
         paddingTop: 7,
-        position:'absolute',
-        bottom:0,
-        zIndex:1,
-        backgroundColor:'white',
-        paddingVertical:10
+        position: 'absolute',
+        bottom: 0,
+        zIndex: 1,
+        backgroundColor: 'white',
+        paddingVertical: 10
     }
 })

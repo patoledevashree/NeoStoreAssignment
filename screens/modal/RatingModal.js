@@ -11,7 +11,7 @@ import { AirbnbRating } from 'react-native-ratings';
  * @returns JSX of Modal
  */
 export default function RatingModal({ visible, closeModal }) {
-    const [rate, setRating] = useState(2)
+    const [rating, setRating] = useState('')
     return (
         <Modal
             transparent={true}
@@ -39,7 +39,7 @@ export default function RatingModal({ visible, closeModal }) {
                                     count={5}
                                     reviews={['Bad', 'Ok', 'Good', 'Very Good', 'Amazing']}
                                     showRating={true}
-                                    onFinishRating={() => {
+                                    onFinishRating={(rate) => {
                                         console.log(rate)
                                         setRating(rate)
                                     }}

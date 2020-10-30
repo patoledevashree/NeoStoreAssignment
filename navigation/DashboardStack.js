@@ -57,7 +57,6 @@ export default function DashboardStack() {
                 },
                 headerTintColor: '#fff',
                 headerTitleStyle: {
-                    fontWeight: 'bold',
                     fontSize: 25
                 },
             }}

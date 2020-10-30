@@ -41,9 +41,9 @@ const validationSchema = yup.object({
         ),
     Phone: yup
         .string()
-        .required(),
-    // .matches('/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/'
-    //     , 'Phone number is not valid')
+        .required()
+        .min(10)
+        .max(10),
     Gender: yup
         .string()
         .required()

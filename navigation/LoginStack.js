@@ -62,7 +62,7 @@ export default function LoginStack() {
           },
         }}
       />
-      <Stack.Screen name='Register' component={RegisterStack}
+      {/* <Stack.Screen name='RegisterStack' component={RegisterStack}
         options={{
           title: 'Register',
           headerStyle: {
@@ -74,7 +74,7 @@ export default function LoginStack() {
             fontSize: 25
           },
         }}
-      />
+      /> */}
     </Stack.Navigator>
   )
 }

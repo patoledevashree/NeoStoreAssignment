@@ -12,7 +12,8 @@ import RatingModal from './modal/RatingModal'
  *           buy product and also rate the product and can add product to cart
  * @returns JSX of Product Detail screen
  */
-export default function ProductDetail() {
+export default function ProductDetail({route}) {
+    const product = route.params.title
     const [rate,setrating] =useState(false)
 
     const addCart = ()=>{
@@ -57,7 +58,7 @@ export default function ProductDetail() {
                         fontSize: 25,
                         fontWeight: 'bold'
                     }}>
-                        Godrej Interio bed</Text>
+                        {product}</Text>
                     <Text style={{
                         fontSize: 18,
                     }}>Bed</Text>

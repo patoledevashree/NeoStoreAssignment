@@ -5,6 +5,7 @@ import LoginStack from './navigation/LoginStack';
 import RegisterStack from './navigation/RegisterStack';
 import DashboardStack from './navigation/DashboardStack';
 import ProductStack from './navigation/ProductStack';
+import MyAccountStack from './navigation/MyAccountStack';
 
 const Drawer = createDrawerNavigator();
 
@@ -24,6 +25,7 @@ export default class App extends Component{
           <Drawer.Screen name ='Register' component={RegisterStack}/>
           <Drawer.Screen name = 'Dashboard' component={DashboardStack} />
           <Drawer.Screen name= 'Product' component ={ProductStack} />
+          <Drawer.Screen name= 'MyAccount' component={MyAccountStack} />
         </Drawer.Navigator>
       </NavigationContainer>
     )
