@@ -12,11 +12,13 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { connect } from 'react-redux';
+import { login } from '../redux/action/LoginAction';
 
 const validationSchema = yup.object({
     userId: yup
         .string()
-        .min(4)
+        .email()
         .required(),
     password: yup
         .string()
@@ -31,7 +33,7 @@ const validationSchema = yup.object({
  * @returns JSX of Login screen.
  */
 
-export default function Login() {
+function Login({userData,login}) {
     const navigation = useNavigation();
 
     const [displayPassword, setPassword] = useState(true);
@@ -56,13 +58,14 @@ export default function Login() {
                 </Text>
                 <Formik
                     initialValues={{
-                        userId: '',
+                        email: '',
                         password: ''
                     }}
                     validationSchema={validationSchema}
-                    onSubmit={values => {
-                        console.log(values)
-                    }}
+                   onSubmit={(values)=>{
+                       console.log(values)
+                       console.log('Submit')
+                   }}
                 >
                     {
                         (props) => (
@@ -72,14 +75,14 @@ export default function Login() {
                                     <FontAwesome style={{ position: 'relative', top: 35, left: 15 }}
                                         name='user' color='#777' size={20} />
                                     <TextInput style={styles.input}
-                                        placeholder='UserId'
-                                        onChangeText={props.handleChange('userId')}
-                                        value={props.values.userId}
-                                        onBlur={props.handleBlur('userId')}
+                                        placeholder='Email'
+                                        onChangeText={props.handleChange('email')}
+                                        value={props.values.email}
+                                        onBlur={props.handleBlur('email')}
 
                                     />
                                     <Text style={styles.error}>
-                                        {props.touched.userId && props.errors.userId}
+                                        {props.touched.email && props.errors.email}
                                     </Text>
 
                                 </View>
@@ -102,7 +105,7 @@ export default function Login() {
                                         {props.touched.password && props.errors.password}
                                     </Text>
                                 </View>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={props.handleSubmit}>
                                     <View style={styles.button}>
                                         <Text style={{
                                             color: 'white', fontSize: 20, textAlign: 'center', padding: 5
@@ -133,6 +136,18 @@ export default function Login() {
             </View>
         </TouchableWithoutFeedback>
     )
+}
+
+const mapStateToProps = state => {
+    return {
+        userData: state.loginReducer.user
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (data) => dispatch(login(data))
+    }
 }
 
 const styles = StyleSheet.create({
@@ -186,3 +201,5 @@ const styles = StyleSheet.create({
         fontSize: 15
     }
 })
+
+export default connect(mapStateToProps,mapDispatchToProps)(Login)

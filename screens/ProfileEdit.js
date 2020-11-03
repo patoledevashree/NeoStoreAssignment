@@ -16,6 +16,13 @@ import RadioForm from 'react-native-simple-radio-button';
 import * as yup from 'yup';
 import { ScrollView } from 'react-native-gesture-handler';
 
+/**
+ * @author Devashree Patole
+ * @description This screen is for the user to edit the profile here user can change the profile image
+ *              first name, last name, gender,email, phone no
+ * @returns JSX of Profile Edit screen
+ */
+
 var radio_props = [
     { label: 'Male', value: 0 },
     { label: 'Female', value: 1 }

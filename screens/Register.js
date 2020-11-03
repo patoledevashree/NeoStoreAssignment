@@ -5,14 +5,17 @@ import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
-    Keyboard
+    Keyboard,
+    ScrollView,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import { ScrollView, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import RadioForm from 'react-native-simple-radio-button';
 import { useNavigation } from '@react-navigation/native';
+import axios  from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const validationSchema = yup.object({
     FirstName: yup
@@ -50,8 +53,8 @@ const validationSchema = yup.object({
 })
 
 var radio_props = [
-    { label: 'Male', value: 0 },
-    { label: 'Female', value: 1 }
+    { label: 'male', value: 0 },
+    { label: 'female', value: 1 }
 ];
 
 /**
@@ -110,7 +113,25 @@ export default function Register() {
                             }}
                             validationSchema={validationSchema}
                             onSubmit={values => {
-                                console.log(values)
+                                console.log('OnSubmit',values)
+                                axios.post('http://180.149.241.208:3022/register',{
+                                    first_name:values.FirstName,
+                                    last_name:values.LastName,
+                                    email:values.Email,
+                                    pass:values.password,
+                                    confirmPass:values.confirmPwd,
+                                    phone_no:values.Phone,
+                                    gender:values.Gender
+                                })
+                                .then(response=>{
+                                    console.log(response)
+                                    Toast.show('Registered Successfully')
+                                    navigation.navigate('Login')
+                                })
+                                .catch(error=>{
+                                    console.log(error)
+                                    Toast.show('Something Went wrong')
+                                })
                             }}
                         >
                             {

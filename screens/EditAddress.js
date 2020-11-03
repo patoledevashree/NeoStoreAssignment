@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
     View,
     Text,
@@ -6,18 +6,19 @@ import {
     TextInput,
     Button,
     ScrollView
-} from 'react-native'
-import { Formik } from 'formik'
-import * as yup from 'yup'
+} from 'react-native';
+import { Formik } from 'formik';
+import * as yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
+import { useNavigation } from '@react-navigation/native';
+
 
 /**
  * @author Devashree Patole
- * @description This screen is for the user to add address ,pin code
- *              city , state, country
- * @returns JSX of Add Address screen
+ * @description This screen is for the user to edit address and then save the address
+ * @param {object} route This contains the data which is passed between the screens during navigation 
+ * @returns JSX of Edit address screen
  */
-
 const validationSchema = yup.object({
     address: yup
         .string()
@@ -38,25 +39,30 @@ const validationSchema = yup.object({
         .required(),
 })
 
-export default function AddAddress() {
+export default function EditAddress({ route }) {
+    const detail = route.params.data;
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <ScrollView>
                 <Formik
                     initialValues={{
-                        address: '',
-                        pinCode: '',
-                        city: '',
-                        state: '',
-                        country: ''
+                        address: detail.address,
+                        pinCode: detail.pinCode,
+                        city: detail.city,
+                        state: detail.state,
+                        country: detail.country
                     }}
                     validationSchema={validationSchema}
                     onSubmit={(values) => {
-                        console.log(values)
+
+                        console.log('onsubmit', values);
+                        navigation.goBack();
                     }}
                 >
                     {(props) => (
                         <View>
+                            {console.log('details', detail)}
                             <View>
                                 <FontAwesome name='address-card' size={25} color={'#777'}
                                     style={styles.icon}
@@ -145,9 +151,10 @@ export default function AddAddress() {
                             </View>
 
                             <View style={{ borderRadius: 10, marginTop: 20, width: 300 }}>
-                                <Button title='Submit' color={'#2874F0'}
+                                <Button title='Update address' color={'#2874F0'}
                                     onPress={props.handleSubmit} />
                             </View>
+
                         </View>
                     )}
                 </Formik>

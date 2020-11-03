@@ -1,9 +1,22 @@
 import React from 'react'
-import { View, Text, TextInput, StyleSheet, Button, ScrollView } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    Button,
+    ScrollView
+} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
+/**
+ * @author Devashree Patole
+ * @description This screen is for the user to change the existing password
+ *              user requires the old password and then a new password
+ * @returns JSX of Change Password screen
+ */
 
 const validationSchema = yup.object({
     oldPwd: yup

@@ -9,9 +9,18 @@ import Orders from '../screens/Orders';
 import ChangePassword from '../screens/ChangePassword';
 import AddAddress from '../screens/AddAddress';
 import UpdateAddress from '../screens/UpdateAddress';
+import EditAddress from '../screens/EditAddress';
+
+
+/**
+ * @author  Devashree Patole
+ * @description This screen contains the account details of the user
+ *              also the profile image,list of orders,cahnde password,list od address
+ *              the user can also update the address
+ * @returns JSX of Myaccount Screen
+ */
 
 const Stack = createStackNavigator();
-
 export default function MyAccountStack(){
 
     const navigation = useNavigation();
@@ -99,6 +108,17 @@ export default function MyAccountStack(){
                     fontSize: 25
                 },}}
             />
+            <Stack.Screen  name='EditAddress' component={EditAddress}
+            options={{
+                title:'Edit Address',
+                headerStyle:{
+                    backgroundColor: '#2874F0',
+                },
+                headerTintColor:'#fff',
+                headerTitleStyle:{
+                    fontSize:25
+                },
+            }} />
             
         </Stack.Navigator>
     )

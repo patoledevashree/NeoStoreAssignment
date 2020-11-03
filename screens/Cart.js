@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, Button, TouchableOpacity, Alert, SnapshotViewIOSComponent } from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    Image,
+    Button,
+    TouchableOpacity,
+    Alert
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
@@ -17,7 +25,6 @@ import { Formik } from 'formik';
 export default function Dashboard() {
     const cartItem = [
         {
-
             product_name: 'Godrej Interio bed',
             quantity: 1,
             product_cost: 20000
@@ -91,7 +98,7 @@ export default function Dashboard() {
                                                 <TouchableOpacity
                                                     onPress={() => {
                                                         props.values.quantity > 1 ? props.setFieldValue('quantity', props.values.quantity - 1) :
-                                                        Toast.show('Quantity must be 1')
+                                                            Toast.show('Quantity must be 1')
                                                     }}>
                                                     <Text style={styles.countButton}>-</Text>
                                                 </TouchableOpacity>

@@ -2,28 +2,41 @@ import React, { useState } from 'react'
 import { View, Text, StyleSheet, Button, TouchableOpacity, ScrollView } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import Toast from 'react-native-simple-toast';
+import { useNavigation } from '@react-navigation/native'
 
+
+/**
+ * @author Devashree Patole
+ * @description This screen is to display list of address provided by user and also
+ *              the user can edit the address and delete it
+ * @returns JSX of Update address sctreen
+ */
 export default function UpdateAddress() {
     const [addressList, setAddress] = useState([
         {
             address: '10,Prakasj building,Nilemore,Station Road,Vasai west',
-            pinCode: 401203,
+            pinCode: '401203',
             city: 'Mumbai',
+            state:'Maharashtra',
             country: 'India'
         },
         {
             address: '304/A, Natraj Apt. Chedda Marg, Hotel Manthan, Virar East',
-            pinCode: 401206,
+            pinCode: '401206',
             city: 'Mumbai',
+            state:'Maharashtra',
             country: 'India'
         },
         {
             address: 'Gala no. 20, Bapat Marg, Nilkanth Chowk, Plaghar',
-            pinCode: 402203,
+            pinCode: '402203',
             city: 'Mumbai',
+            state:'Maharashtra',
             country: 'India'
         },
     ])
+
+    const navigation = useNavigation();
 
     const removeAddress = () => {
         Toast.show('Address Deleted');
@@ -40,7 +53,7 @@ export default function UpdateAddress() {
                                     <Text style={{ fontSize: 18, paddingTop: 5 }}>{item.city} - {item.pinCode}</Text>
                                     <Text style={{ fontSize: 18, paddingTop: 5 }}>{item.country}</Text>
                                     <View style={{ width: 150, marginVertical: 20 }}>
-                                        <Button title='Edit' />
+                                        <Button title='Edit' onPress={()=>{navigation.navigate('EditAddress',{data:item})}} />
                                     </View>
                                     <View style={styles.icon}>
                                         <TouchableOpacity onPress={() => { removeAddress() }}>
@@ -62,7 +75,7 @@ export default function UpdateAddress() {
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 10
+        marginTop:10
     },
     cardWrapper: {
         width: '90%',
