@@ -12,6 +12,9 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { ScrollView } from 'react-native-gesture-handler';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
+import { useNavigation } from '@react-navigation/native';
 
 const validationschema = yup.object({
     otp: yup
@@ -39,11 +42,13 @@ const validationschema = yup.object({
  * @returns jsx of the setpassword screen
  */
 
-export default function ForgetPassword() {
+export default function ForgetPassword({ route }) {
     const [securePwd, setPassword] = useState(true);
     const [secureCrfm, setCfrmPwd] = useState(true);
     const [pwd_eyeStyle, setPwdIcon] = useState('eye-slash');
     const [crf_eyeStyle, setCrfmIcon] = useState('eye-slash');
+    const navigation = useNavigation();
+    const token = route.params.token
 
     const handlePwdClick = () => {
 
@@ -85,6 +90,25 @@ export default function ForgetPassword() {
                         validationSchema={validationschema}
                         onSubmit={(values) => {
                             console.log(values)
+                            console.log(route.params.token)
+                            axios.post('http://180.149.241.208:3022/recoverPassword',
+                            {
+                                otpCode: values.otp,
+                                newPass: values.password,
+                                confirmPass: values.confirmPwd
+                            },
+                            {
+                                headers: { 'Authorization': `bearer ${token}` }
+                            })
+                                .then(response => {
+                                    console.log('response',response)
+                                    Toast.show(response.data.message)
+                                    navigation.navigate('Login')
+                                })
+                                .catch(error => {
+                                    console.log('error',error,error.response)
+                                    Toast.show(error.response.data.message)
+                                })
                         }}
                     >
                         {(props) => (

@@ -16,6 +16,9 @@ import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { getDashboard, getTopRatedProduct } from '../redux/action/DashboardAction';
+import { restoreData } from '../redux/action/LoginAction';
+import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 /**
  * @author Devashree Patole
@@ -24,14 +27,67 @@ import { getDashboard, getTopRatedProduct } from '../redux/action/DashboardActio
  * @returns JSX of Dashboard
  */
 
-function Dashboard({ categoryList, topRatedProduct, isLoading, getDashboard, getTopRatedProduct }) {
+let timeOutId;
+
+const debounce = (func, delay) => {
+    return ({ ...args }) => {
+        if (timeOutId) clearTimeout(timeOutId);
+        timeOutId = setTimeout(() => {
+            func.apply(null, args)
+        }, delay)
+    }
+}
+
+function Dashboard(props) {
     const navigation = useNavigation();
+    const [query, setQuery] = useState('');
+    const [searchResult, setResult] = useState([]);
+
     useEffect(() => {
-        getDashboard()
-        getTopRatedProduct()
+        props.getDashboard()
+        props.getTopRatedProduct()
+        restoteUserData()
     }, [])
 
-    if (isLoading) {
+    const restoteUserData = async () => {
+        const user = await AsyncStorage.getItem('user');
+        const parseData = await JSON.parse(user);
+        if (user !== null) {
+            props.restoreData(parseData);
+        }
+    }
+
+    const handleChange = (val) => {
+       
+      
+            console.log('query')
+            setQuery(val);
+            debounceSearch();
+
+
+    }
+
+    const handleSearch = () => {
+        console.log(query)
+        axios.get(`http://180.149.241.208:3022/getProductBySearchText/${query}`)
+            .then(response => {
+                console.log('search response', response.data)
+                const data = response.data.product_details
+                if (data === "No details are available") {
+                    setResult([])
+                }
+                else {
+                    setResult(data)
+                }
+            })
+            .catch(error => {
+                console.log('Error search', error, error.data)
+            })
+    }
+
+    const debounceSearch = debounce(handleSearch, 1000)
+
+    if (props.isLoading) {
         return (
             <LottieView
                 source={require('../assests/images/4383-circle-loader.json')}
@@ -42,7 +98,6 @@ function Dashboard({ categoryList, topRatedProduct, isLoading, getDashboard, get
     else {
         return (
             <View style={{ marginBottom: 30 }}>
-                {console.log('Dashboard Screen', categoryList)}
                 <View style={styles.container}>
                     <View style={styles.search}>
                         <View>
@@ -52,130 +107,149 @@ function Dashboard({ categoryList, topRatedProduct, isLoading, getDashboard, get
                         <View>
                             <TextInput style={styles.input}
                                 placeholder='Search for Products'
+                                onChangeText={(val) => { handleChange(val) }}
                             />
                         </View>
                     </View>
                 </View>
                 <ScrollView>
+                    {query.length == 0 ?
+                        <View>
+                            <View style={styles.container}>
+                                <View style={styles.sliderContainer}>
+                                    <Swiper autoplay>
+                                        {props.categoryList.map((item, index) => {
+                                            return (
+                                                <View key={index} style={styles.slide}>
+                                                    <TouchableOpacity>
+                                                        <Image
+                                                            source={{
+                                                                uri: `http://180.149.241.208:3022/${item.product_image}`
+                                                            }}
+                                                            resizeMode='cover'
+                                                            style={styles.sliderImage}
+                                                        />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            )
+                                        })}
+                                    </Swiper>
+
+                                </View>
+                            </View>
 
 
-                    <View style={styles.container}>
-                        <View style={styles.sliderContainer}>
-                            <Swiper autoplay>
-                                {categoryList.map((item, index) => {
+                            <View>
+                                <Text style={{
+                                    textAlign: 'center',
+                                    fontSize: 25,
+                                    padding: 10,
+                                    color: '#3b3b3b',
+                                    paddingTop: 20
+                                }}>
+                                    Products
+                            </Text>
+                                <TouchableOpacity onPress={() => { navigation.navigate('Product') }}>
+                                    <Text style={{
+                                        textAlign: 'center',
+                                        padding: 10,
+                                        fontSize: 18,
+                                        color: '#3b3b3b'
+                                    }}>
+                                        View All
+                            </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ backgroundColor: '#e7e7e7', marginBottom: 40 }}>
+                                {console.log(props.topRatedProduct)}
+                                {props.topRatedProduct.map((item, index) => {
                                     return (
-                                        <View key={index} style={styles.slide}>
-                                            <TouchableOpacity>
-                                                <Image
-                                                    source={{
-                                                        uri: `http://180.149.241.208:3022/${item.product_image}`
-                                                    }}
-                                                    resizeMode='cover'
-                                                    style={styles.sliderImage}
-                                                />
+                                        <View key={index} style={styles.cardWrapper}>
+                                            <TouchableOpacity onPress={() => {
+                                                navigation.navigate('ProductDetail',
+                                                    {
+                                                        data: item.DashboardProducts[0].product_id,
+                                                        product_name: item.DashboardProducts[0].product_name
+                                                    }
+                                                )
+                                            }}>
+                                                <View style={styles.card}>
+                                                    <View style={styles.cardImgWrapper}>
+                                                        <ImageBackground
+                                                            source={{
+                                                                uri: `http://180.149.241.208:3022/${item.DashboardProducts[0].product_image}`
+                                                            }}
+                                                            resizeMode='cover'
+                                                            style={styles.cardImg}
+                                                        >
+                                                            <View style={styles.productView}>
+                                                                <Text style={{
+                                                                    color: 'white',
+                                                                    textAlign: 'right',
+                                                                    fontSize: 20,
+                                                                    paddingRight: 20,
+                                                                    paddingTop: 30
+                                                                }}>
+                                                                    {item.DashboardProducts[0].product_name}
+                                                                </Text>
+                                                                <Text style={{
+                                                                    color: 'white',
+                                                                    textAlign: 'right',
+                                                                    fontSize: 16,
+                                                                    paddingRight: 20,
+                                                                    paddingTop: 5
+                                                                }}>
+                                                                    {'\u20B9'}{item.DashboardProducts[0].product_cost}
+                                                                </Text>
+                                                            </View>
+                                                        </ImageBackground>
+                                                    </View>
+                                                </View>
                                             </TouchableOpacity>
+
                                         </View>
                                     )
                                 })}
-                            </Swiper>
 
+                            </View>
                         </View>
-                    </View>
-
-
-                    <View>
-                        <Text style={{
-                            textAlign: 'center',
-                            fontSize: 25,
-                            padding: 10,
-                            color: '#3b3b3b',
-                            paddingTop: 20
-                        }}>
-                            Products
-                </Text>
-                        <TouchableOpacity onPress={() => { navigation.navigate('Product') }}>
-                            <Text style={{
-                                textAlign: 'center',
-                                padding: 10,
-                                fontSize: 18,
-                                color: '#3b3b3b'
-                            }}>
-                                View All
-                    </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ backgroundColor: '#e7e7e7', marginBottom: 40 }}>
-                        {topRatedProduct.map((item, index) => {
-                            return (
-                                <View key={index} style={styles.cardWrapper}>
-                                    <TouchableOpacity onPress={() => {
-                                        navigation.navigate('ProductDetail',
-                                            {
-                                                data: item.DashboardProducts[0],
-                                                product_name: item.DashboardProducts[0].product_name
-                                            }
-                                        )
-                                    }}>
-                                        <View style={styles.card}>
-                                            <View style={styles.cardImgWrapper}>
-                                                <ImageBackground
-                                                    source={{
-                                                        uri: `http://180.149.241.208:3022/${item.DashboardProducts[0].product_image}`
-                                                    }}
-                                                    resizeMode='cover'
-                                                    style={styles.cardImg}
-                                                >
-                                                    <View style={styles.productView}>
-                                                        <Text style={{
-                                                            color: 'white',
-                                                            textAlign: 'right',
-                                                            fontSize: 20,
-                                                            paddingRight: 20,
-                                                            paddingTop: 30
-                                                        }}>
-                                                            {item.DashboardProducts[0].product_name}
-                                                        </Text>
-                                                        <Text style={{
-                                                            color: 'white',
-                                                            textAlign: 'right',
-                                                            fontSize: 16,
-                                                            paddingRight: 20,
-                                                            paddingTop: 5
-                                                        }}>
-                                                            {'\u20B9'}{item.DashboardProducts[0].product_cost}
-                                                        </Text>
-                                                    </View>
-                                                </ImageBackground>
-                                            </View>
-                                        </View>
-                                    </TouchableOpacity>
-
-                                </View>
-                            )
-                        })}
-
-                    </View>
+                        :
+                        <View>
+                            {searchResult.map((item, index) => {
+                                return (
+                                    <View key={index}>
+                                        <Text>{item.product_name}</Text>
+                                    </View>
+                                )
+                            })}
+                        </View>
+                    }
                 </ScrollView>
             </View>
-
         )
     }
+
+
 }
 
 const mapStateToProps = state => {
     return {
         categoryList: state.dashboardReducer.categoryList,
         topRatedProduct: state.dashboardReducer.topRatedProduct,
-        isLoading: state.dashboardReducer.isLoading
+        isLoading: state.dashboardReducer.isLoading,
+        userData: state.loginReducer.user
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         getDashboard: () => dispatch(getDashboard()),
-        getTopRatedProduct: () => dispatch(getTopRatedProduct())
+        getTopRatedProduct: () => dispatch(getTopRatedProduct()),
+        restoreData: (userData) => dispatch(restoreData(userData))
     }
 }
+
+
 
 const styles = StyleSheet.create({
     container: {

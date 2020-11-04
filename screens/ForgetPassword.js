@@ -12,11 +12,14 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import axois from 'axios';
+import Toast from 'react-native-simple-toast';
+
 
 const validationschema = yup.object({
-    userId: yup
+    email: yup
         .string()
-        .min(4)
+        .email()
         .required()
 })
 /**
@@ -37,11 +40,22 @@ export default function ForgetPassword() {
                     Neo<Text style={{ color: '#2874F0' }}>Store</Text>
                 </Text>
                 <Formik
-                    initialValues={{ userId: '' }}
+                    initialValues={{ email: '' }}
                     validationSchema={validationschema}
                     onSubmit={(values) => {
                         console.log(values)
-                        navigation.navigate('SetPassword')
+                        axois.post('http://180.149.241.208:3022/forgotPassword',{
+                            email:values.email
+                        })
+                        .then(response=>{
+                            const data = response.data
+                            console.log(response)
+                            Toast.show(response.data.message)
+                            navigation.navigate('SetPassword',{token:data.token})
+                        })
+                        .catch(error=>{
+                            Toast.show(error.response.data.message)
+                        })
                     }}
                 >
                     {(props) => (
@@ -55,13 +69,13 @@ export default function ForgetPassword() {
                             />
 
                             <TextInput style={styles.input}
-                                placeholder='Enter UserId'
-                                onChangeText={props.handleChange('userId')}
-                                value={props.values.userId}
-                                onBlur={props.handleBlur('userId')}
+                                placeholder='Enter Email'
+                                onChangeText={props.handleChange('email')}
+                                value={props.values.email}
+                                onBlur={props.handleBlur('email')}
                             />
                             <Text style={styles.error}>
-                                {props.touched.userId && props.errors.userId}
+                                {props.touched.email && props.errors.email}
                             </Text>
                             <TouchableOpacity onPress={props.handleSubmit}>
                                 <View style={styles.button}>

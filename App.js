@@ -1,4 +1,4 @@
-import React ,{Component} from 'react';
+import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import LoginStack from './navigation/LoginStack';
@@ -16,17 +16,17 @@ const Drawer = createDrawerNavigator();
  *              Dashboardand Product screenPropTypes.
  * @returns JSX of the Navigation.
  */
-export default class App extends Component{
-  render(){
-   
-    return(
+export default class App extends Component {
+  render() {
+
+    return (
       <NavigationContainer>
-        <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
+        <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
+          <Drawer.Screen name='Dashboard' component={DashboardStack} />
           <Drawer.Screen name='Login' component={LoginStack} />
-          <Drawer.Screen name ='Register' component={RegisterStack}/>
-          <Drawer.Screen name = 'Dashboard' component={DashboardStack} />
-          <Drawer.Screen name= 'Product' component ={ProductStack} />
-          <Drawer.Screen name= 'MyAccount' component={MyAccountStack} />
+          <Drawer.Screen name='Register' component={RegisterStack} />
+          <Drawer.Screen name='Product' component={ProductStack} />
+          <Drawer.Screen name='MyAccount' component={MyAccountStack} />
         </Drawer.Navigator>
       </NavigationContainer>
     )

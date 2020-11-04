@@ -1,10 +1,12 @@
 import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
-    LOGIN_FALIURE
+    LOGIN_FALIURE,
+    STORE_DATA,
 } from './types';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const loginRequest = () => {
     return {
@@ -25,6 +27,14 @@ export const loginFaliure = (error) => {
         data: error
     }
 }
+export const storeData =(user) =>{
+    return{
+        type:STORE_DATA,
+        data:user
+    }
+}
+
+
 
 export const login = (data) => {
     return (dispatch) => {
@@ -34,14 +44,26 @@ export const login = (data) => {
             pass:data.password
         })
         .then(response=>{
-            const user = response.customer_details
-            console.log(response)
+            const user = response
             dispatch(loginSuccess(user))
-            Toast.show(response.message)
+            Toast.show('Logged In Successfully')
+            setData(user)
         })
         .catch(error=>{
             dispatch(loginFaliure(error.message))
-            Toast.show(error.message)
+            Toast.show('Incorrect Email or Password')
         })
     }
+}
+
+export const restoreData =(user) =>{
+    return(dispatch) =>{
+        dispatch(storeData(user))
+        console.log('Restoredata')
+    }
+}
+
+export const setData = async (user)=>{
+    console.log('setData')
+    await AsyncStorage.setItem('user',JSON.stringify(user));
 }

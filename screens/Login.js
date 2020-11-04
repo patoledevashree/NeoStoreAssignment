@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { login } from '../redux/action/LoginAction';
 
 const validationSchema = yup.object({
-    userId: yup
+    email: yup
         .string()
         .email()
         .required(),
@@ -33,7 +33,7 @@ const validationSchema = yup.object({
  * @returns JSX of Login screen.
  */
 
-function Login({userData,login}) {
+function Login({ userData, login }) {
     const navigation = useNavigation();
 
     const [displayPassword, setPassword] = useState(true);
@@ -62,10 +62,17 @@ function Login({userData,login}) {
                         password: ''
                     }}
                     validationSchema={validationSchema}
-                   onSubmit={(values)=>{
-                       console.log(values)
-                       console.log('Submit')
-                   }}
+                    onSubmit={(values, action) => {
+                        console.log(values)
+                        login(values)
+                        navigation.navigate('Dashboard')
+                        action.resetForm({
+                            values: {
+                                email: '',
+                                password: ''
+                            }
+                        })
+                    }}
                 >
                     {
                         (props) => (
@@ -81,9 +88,11 @@ function Login({userData,login}) {
                                         onBlur={props.handleBlur('email')}
 
                                     />
-                                    <Text style={styles.error}>
-                                        {props.touched.email && props.errors.email}
-                                    </Text>
+                                    {props.touched.email && props.errors.email && (
+                                        <Text style={styles.error}>
+                                            {props.touched.email && props.errors.email}
+                                        </Text>
+                                    )}
 
                                 </View>
                                 <View >
@@ -101,9 +110,11 @@ function Login({userData,login}) {
                                         color='#777'
                                         onPress={handleClick}
                                     />
-                                    <Text style={styles.error}>
-                                        {props.touched.password && props.errors.password}
-                                    </Text>
+                                    {props.touched.password && props.errors.password && (
+                                        <Text style={styles.error}>
+                                            {props.touched.password && props.errors.password}
+                                        </Text>
+                                    )}
                                 </View>
                                 <TouchableOpacity onPress={props.handleSubmit}>
                                     <View style={styles.button}>
@@ -122,7 +133,7 @@ function Login({userData,login}) {
                                     <View>
                                         <Text style={styles.textInput}>Don't Have an Account?</Text>
                                     </View>
-                                    <TouchableOpacity onPress={()=>{navigation.navigate('Register')}}>
+                                    <TouchableOpacity onPress={() => { navigation.navigate('Register') }}>
                                         <View>
                                             <FontAwesome style={styles.icon} name='plus' size={40} color={'white'} />
                                         </View>
@@ -166,7 +177,7 @@ const styles = StyleSheet.create({
         paddingRight: 40
     },
     button: {
-        marginTop: 10,
+        marginTop: 20,
         height: 40,
         width: 300,
         backgroundColor: '#2874F0',
@@ -202,4 +213,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default connect(mapStateToProps,mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
     View,
     Text,
@@ -12,7 +12,10 @@ import Swiper from 'react-native-swiper';
 import { Rating } from 'react-native-ratings';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Toast from 'react-native-simple-toast';
-import RatingModal from './modal/RatingModal'
+import RatingModal from './modal/RatingModal';
+import { connect } from 'react-redux';
+import { getProductDetail } from '../redux/action/ProductAction';
+import LottieView from 'lottie-react-native';
 
 
 /**
@@ -23,10 +26,15 @@ import RatingModal from './modal/RatingModal'
  *                       during navigation
  * @returns JSX of Product Detail screen
  */
-export default function ProductDetail({ route }) {
-    const product = route.params.data
-    const subImages = product.subImages[0].product_subImages
+function ProductDetail(props) {
+    const product_id = props.route.params.data
+    
+    useEffect(()=>{
+        props.getProductDetail(product_id);
+    },[])
+
     const [rate, setrating] = useState(false)
+    const subImages = props.product.subImages_id.product_subImages;
 
     const addCart = () => {
         Toast.show('Item Added to Cart', Toast.LONG);
@@ -35,6 +43,15 @@ export default function ProductDetail({ route }) {
     const closeModal = () => {
         setrating(false)
     }
+    if(props.loading){
+        return(
+            <LottieView
+            source={require('../assests/images/4383-circle-loader.json')}
+            autoPlay loop
+        />
+        )
+    }
+    else{
     return (
         <View>
             <ScrollView>
@@ -64,16 +81,19 @@ export default function ProductDetail({ route }) {
                             fontSize: 25,
                             fontWeight: 'bold'
                         }}>
-                            {product.product_name}</Text>
+                            {props.product.product_name}</Text>
+
                         <Text style={{
                             fontSize: 18,
-                        }}>{product.product_category[0].category_name}</Text>
+                        }}>{props.product.category_id.category_name}</Text>
+
                         <Text style={{
                             color: '#eb9800',
                             fontSize: 22,
                             fontWeight: 'bold',
                             marginTop: 5
-                        }}>{'\u20B9'}{product.product_cost}</Text>
+                        }}>{'\u20B9'}{props.product.product_cost}</Text>
+
                         <View style={{
                             flexDirection: 'row',
                             justifyContent: 'flex-start',
@@ -81,18 +101,20 @@ export default function ProductDetail({ route }) {
                         }}>
                             <Rating
                                 count={5}
-                                startingValue={Number(product.product_rating)}
+                                startingValue={Number(props.product.product_rating)}
                                 imageSize={20}
                                 readonly={true}
                                 type={'custom'}
                                 tintColor='white'
                             />
                         </View>
+
                         <Text style={{
                             fontSize: 18,
                             marginTop: 5
-                        }}>Product By: {product.product_producer}</Text>
+                        }}>Product By: {props.product.product_producer}</Text>
                     </View>
+
                     <View>
                         <Text style={{
                             fontWeight: 'bold',
@@ -102,13 +124,13 @@ export default function ProductDetail({ route }) {
                         <Text style={{
                             fontSize: 18,
                             marginTop: 10
-                        }}>{product.product_desc}</Text>
+                        }}>{props.product.product_desc}</Text>
                         <Text style={{
                             fontSize: 18,
                             marginTop: 10
                         }}>
                             <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Dimension :
-                        </Text> {product.product_dimension}</Text>
+                        </Text> {props.product.product_dimension}</Text>
                     </View>
                 </View>
 
@@ -135,7 +157,20 @@ export default function ProductDetail({ route }) {
         </View>
     )
 }
+}
 
+const mapStateToProps = state => {
+    return {
+        product: state.productReducer.productDetail,
+        loading : state.productReducer.loading
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getProductDetail: (id) => dispatch(getProductDetail(id))
+    }
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -191,3 +226,5 @@ const styles = StyleSheet.create({
         elevation: 9
     }
 })
+
+export default connect(mapStateToProps,mapDispatchToProps)(ProductDetail)

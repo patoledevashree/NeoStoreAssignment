@@ -14,7 +14,7 @@ import * as yup from 'yup';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import RadioForm from 'react-native-simple-radio-button';
 import { useNavigation } from '@react-navigation/native';
-import axios  from 'axios';
+import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 
 const validationSchema = yup.object({
@@ -112,25 +112,36 @@ export default function Register() {
                                 Gender: ''
                             }}
                             validationSchema={validationSchema}
-                            onSubmit={values => {
-                                console.log('OnSubmit',values)
-                                axios.post('http://180.149.241.208:3022/register',{
-                                    first_name:values.FirstName,
-                                    last_name:values.LastName,
-                                    email:values.Email,
-                                    pass:values.password,
-                                    confirmPass:values.confirmPwd,
-                                    phone_no:values.Phone,
-                                    gender:values.Gender
+                            onSubmit={(values, action) => {
+                                axios.post('http://180.149.241.208:3022/register', {
+                                    first_name: values.FirstName,
+                                    last_name: values.LastName,
+                                    email: values.Email,
+                                    pass: values.password,
+                                    confirmPass: values.confirmPwd,
+                                    phone_no: values.Phone,
+                                    gender: values.Gender
                                 })
-                                .then(response=>{
-                                    console.log(response)
-                                    Toast.show('Registered Successfully')
-                                    navigation.navigate('Login')
-                                })
-                                .catch(error=>{
-                                    console.log(error)
-                                    Toast.show('Something Went wrong')
+                                    .then(response => {
+                                        console.log(response)
+                                        Toast.show('Registered Successfully')
+                                        navigation.navigate('Login')
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        Toast.show('This email is already registered with us. Please try other email.')
+                                    })
+
+                                action.resetForm({
+                                    values: {
+                                        FirstName: '',
+                                        LastName: '',
+                                        Email: '',
+                                        password: '',
+                                        confirmPwd: '',
+                                        Phone: '',
+                                        Gender: ''
+                                    }
                                 })
                             }}
                         >
@@ -149,9 +160,11 @@ export default function Register() {
                                                 onBlur={props.handleBlur('FirstName')}
 
                                             />
-                                            <Text style={styles.error}>
-                                                {props.touched.FirstName && props.errors.FirstName}
-                                            </Text>
+                                            {props.touched.FirstName && props.errors.FirstName && (
+                                                <Text style={styles.error}>
+                                                    {props.touched.FirstName && props.errors.FirstName}
+                                                </Text>
+                                            )}
 
                                         </View>
                                         <View>
@@ -165,9 +178,11 @@ export default function Register() {
                                                 onBlur={props.handleBlur('LastName')}
 
                                             />
-                                            <Text style={styles.error}>
-                                                {props.touched.LastName && props.errors.LastName}
-                                            </Text>
+                                            {props.touched.LastName && props.errors.LastName && (
+                                                <Text style={styles.error}>
+                                                    {props.touched.LastName && props.errors.LastName}
+                                                </Text>
+                                            )}
 
                                         </View>
 
@@ -182,9 +197,11 @@ export default function Register() {
                                                 onBlur={props.handleBlur('Email')}
 
                                             />
-                                            <Text style={styles.error}>
-                                                {props.touched.Email && props.errors.Email}
-                                            </Text>
+                                            {props.touched.Email && props.errors.Email && (
+                                                <Text style={styles.error}>
+                                                    {props.touched.Email && props.errors.Email}
+                                                </Text>
+                                            )}
 
                                         </View>
 
@@ -202,9 +219,12 @@ export default function Register() {
                                             <FontAwesome style={{ position: 'absolute', top: 35, right: 5 }}
                                                 name={pwd_eyeStyle} size={20} color='#777'
                                                 onPress={handlePwdClick} />
-                                            <Text style={styles.error}>
-                                                {props.touched.password && props.errors.password}
-                                            </Text>
+
+                                            {props.touched.password && props.errors.password && (
+                                                <Text style={styles.error}>
+                                                    {props.touched.password && props.errors.password}
+                                                </Text>
+                                            )}
                                         </View>
 
                                         <View >
@@ -221,9 +241,12 @@ export default function Register() {
                                             <FontAwesome style={{ position: 'absolute', top: 35, right: 5 }}
                                                 name={crf_eyeStyle} size={20} color='#777'
                                                 onPress={handleClick} />
-                                            <Text style={styles.error}>
-                                                {props.touched.confirmPwd && props.errors.confirmPwd}
-                                            </Text>
+
+                                            {props.touched.confirmPwd && props.errors.confirmPwd && (
+                                                <Text style={styles.error}>
+                                                    {props.touched.confirmPwd && props.errors.confirmPwd}
+                                                </Text>
+                                            )}
                                         </View>
 
                                         <View>
@@ -238,12 +261,14 @@ export default function Register() {
                                                 onBlur={props.handleBlur('Phone')}
 
                                             />
-                                            <Text style={styles.error}>
-                                                {props.touched.Phone && props.errors.Phone}
-                                            </Text>
+                                            {props.touched.Phone && props.errors.Phone && (
+                                                <Text style={styles.error}>
+                                                    {props.touched.Phone && props.errors.Phone}
+                                                </Text>
+                                            )}
 
                                         </View>
-                                        <View style={{ flexDirection: 'row' }}>
+                                        <View style={{ flexDirection: 'row', marginTop: 20 }}>
                                             <Text style={{ paddingRight: 10, fontSize: 18 }}>Gender</Text>
                                             <RadioForm
                                                 radio_props={radio_props}
@@ -272,11 +297,11 @@ export default function Register() {
                                                 }}>Register</Text>
                                             </View>
                                         </TouchableOpacity>
-                                        <View style={{flexDirection:'row',marginLeft:10,marginTop:10}}>
+                                        <View style={{ flexDirection: 'row', marginLeft: 10, marginTop: 10 }}>
                                             <View>
                                                 <Text>Already have an Account?</Text>
                                             </View>
-                                            <TouchableOpacity onPress={()=>{navigation.navigate('Login')}}>
+                                            <TouchableOpacity onPress={() => { navigation.navigate('Login') }}>
                                                 <View>
                                                     <Text style={styles.underLineText}>SignIn</Text>
                                                 </View>
@@ -327,8 +352,8 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         color: '#2874F0',
         fontWeight: 'bold',
-        paddingLeft:10
-       
+        paddingLeft: 10
+
     },
     textInput: {
         fontSize: 20,

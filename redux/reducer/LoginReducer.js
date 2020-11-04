@@ -1,7 +1,9 @@
 import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
-    LOGIN_FALIURE
+    LOGIN_FALIURE,
+    SIGN_OUT
+
 }
     from '../action/types';
 
@@ -34,6 +36,24 @@ const LoginReducer =(state= initialState,action) =>{
                 user:[],
                 loading:false,
                 error:action.data
+            }
+        }
+
+        case 'STORE_DATA':{
+            return{
+                ...state,
+                user:action.data,
+                loading:false,
+                error:''
+            }
+        }
+
+        case 'SIGN_OUT':{
+            return{
+                ...state,
+                user:[],
+                loading:false,
+                error:''
             }
         }
         default: return state
