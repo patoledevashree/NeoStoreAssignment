@@ -7,6 +7,8 @@ import {
 
 const initialState = {
     productDetail: {},
+    category:{},
+    colors:[],
     loading: true,
     error: ''
 }
@@ -36,6 +38,25 @@ const ProductReducer = (state = initialState, action) => {
                     error:action.data
                 }
             }
+
+            case 'GET_ALLCATEGORIES':{
+                return{
+                    ...state,
+                    loading:false,
+                    error:'',
+                    category:action.category
+                }
+            }
+
+            case 'GET_ALLCOLORS':{
+                return{
+                    ...state,
+                    loading:false,
+                    error:'',
+                    colors:action.colors
+                }
+            }
+
 
             default : return state
         }

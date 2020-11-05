@@ -7,9 +7,10 @@ import {
     TextInput,
     ImageBackground,
     ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import Swiper from 'react-native-swiper';
 import { color } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
@@ -42,6 +43,7 @@ function Dashboard(props) {
     const navigation = useNavigation();
     const [query, setQuery] = useState('');
     const [searchResult, setResult] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         props.getDashboard()
@@ -58,20 +60,14 @@ function Dashboard(props) {
     }
 
     const handleChange = (val) => {
-       
-      
-            console.log('query')
-            setQuery(val);
-            debounceSearch();
-
-
+        setQuery(val);
+        debounceSearch();
     }
 
     const handleSearch = () => {
         console.log(query)
         axios.get(`http://180.149.241.208:3022/getProductBySearchText/${query}`)
             .then(response => {
-                console.log('search response', response.data)
                 const data = response.data.product_details
                 if (data === "No details are available") {
                     setResult([])
@@ -79,6 +75,7 @@ function Dashboard(props) {
                 else {
                     setResult(data)
                 }
+                setLoading(false)
             })
             .catch(error => {
                 console.log('Error search', error, error.data)
@@ -215,13 +212,60 @@ function Dashboard(props) {
                         </View>
                         :
                         <View>
-                            {searchResult.map((item, index) => {
-                                return (
-                                    <View key={index}>
-                                        <Text>{item.product_name}</Text>
-                                    </View>
-                                )
-                            })}
+                            {loading === true ?
+                                <View style={{ justifyContent: 'center', marginVertical: 20 }}>
+                                    <ActivityIndicator size={"large"} color={'blue'} />
+                                </View> 
+                                :
+                                <View>
+                                    {searchResult.length != 0 ?
+                                        <View>
+                                            {searchResult.map((item, index) => {
+                                                return (
+                                                    <ScrollView>
+                                                        <TouchableOpacity onPress={() => {
+                                                            navigation.navigate('ProductDetail', {
+                                                                data: item.product_id,
+                                                                product_name: item.product_name
+                                                            })
+                                                        }}>
+                                                            <View key={index} style={{
+                                                                borderBottomWidth: 1,
+                                                                flexDirection: 'row',
+                                                                justifyContent: 'space-between'
+                                                            }}>
+                                                                <Text style={{
+                                                                    padding: 15,
+                                                                    fontSize: 20
+                                                                }}>{item.product_name}</Text>
+                                                                <FontAwesome name='external-link-alt'
+                                                                    size={25} color={'#777'}
+                                                                    style={{
+                                                                        right: 20,
+                                                                        top: 15
+                                                                    }}
+                                                                />
+                                                            </View>
+                                                        </TouchableOpacity>
+                                                    </ScrollView>
+                                                )
+                                            })}
+                                        </View> :
+                                        <View style={{ marginVertical: 20 }}>
+                                            <FontAwesome
+                                                name='frown-open' size={200} color={'#e7e7e7'}
+                                                style={{
+                                                    marginHorizontal: 100, marginVertical: 10
+                                                }} />
+                                            <Text style={{
+                                                fontSize: 35,
+                                                color: '#777',
+                                                textAlign: 'center'
+                                            }}>No data found!!</Text>
+                                        </View>
+                                    }
+                                </View>
+                            }
                         </View>
                     }
                 </ScrollView>

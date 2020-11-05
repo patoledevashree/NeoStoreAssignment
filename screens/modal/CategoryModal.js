@@ -11,14 +11,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome5';
  * @param {function} closeModal This function is call to cxlose the modal
  * @returns JSX of Modal
  */
-export default function CategoryModal({ visible, closeModal }) {
-
-    const [category, listCategory] = useState([
-        { name: 'Bed', key: '1' },
-        { name: 'Chair', key: '2' },
-        { name: 'Sofa', key: '3' },
-        { name: 'Almirah', key: '4' }
-    ])
+export default function CategoryModal({ visible, closeModal,categoryList,selectCategory }) {
     const [selectedCategory, setCategory] = useState('')
     return (
 
@@ -43,16 +36,16 @@ export default function CategoryModal({ visible, closeModal }) {
                             />
                         </View>
                         <View style={{ marginTop: 10 }}>
-                            {category.map((item) => {
+                            {categoryList.map((item,index) => {
                                 return (
-                                    <View key={item.key}>
-                                        <TouchableOpacity onPress={() => { setCategory(item.name) }}>
+                                    <View key={index}>
+                                        <TouchableOpacity onPress={() => { selectCategory(item.category_name) }}>
                                             <View style={styles.container}>
                                                 <Text style={{
                                                     fontSize: 20,
                                                     padding: 5,
                                                     textAlign: 'center'
-                                                }}>{item.name}</Text>
+                                                }}>{item.category_name}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -61,7 +54,7 @@ export default function CategoryModal({ visible, closeModal }) {
                         </View>
                         <View style={styles.button}>
                             <Button title='Filter' color={'#b8b8b8'}
-                                onPress={() => { console.log(selectedCategory) }}></Button>
+                                onPress={() => {console.log('Button Pressed') }}></Button>
                         </View>
                     </View>
                 </View>

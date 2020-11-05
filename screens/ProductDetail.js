@@ -34,8 +34,8 @@ function ProductDetail(props) {
     },[])
 
     const [rate, setrating] = useState(false)
-    const subImages = props.product.subImages_id.product_subImages;
 
+    const subImages = props.product.subImages_id.product_subImages
     const addCart = () => {
         Toast.show('Item Added to Cart', Toast.LONG);
     }
