@@ -89,8 +89,6 @@ export default function ForgetPassword({ route }) {
                         }}
                         validationSchema={validationschema}
                         onSubmit={(values) => {
-                            console.log(values)
-                            console.log(route.params.token)
                             axios.post('http://180.149.241.208:3022/recoverPassword',
                             {
                                 otpCode: values.otp,
@@ -101,7 +99,6 @@ export default function ForgetPassword({ route }) {
                                 headers: { 'Authorization': `bearer ${token}` }
                             })
                                 .then(response => {
-                                    console.log('response',response)
                                     Toast.show(response.data.message)
                                     navigation.navigate('Login')
                                 })

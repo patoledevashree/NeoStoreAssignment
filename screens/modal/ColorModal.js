@@ -15,9 +15,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome5';
  *              to select the color and based on that the products will be filtered.
  * @param {object} visible It constains the visibility of the modal 
  * @param {function} closeModal This function is call to cxlose the modal
+ * @param {object} colorsList list of colors
+ * @param {function} selectColor function to save seleted color
+ * @param {function} productByColor function to call api
  * @returns JSX of Modal
  */
-export default function ColorModal({ visible, closeModal ,colorsList,selectColor}) {
+export default function ColorModal({ visible, closeModal ,colorsList,selectColor,productByColor}) {
     return (
         <Modal
             transparent={true}
@@ -38,7 +41,11 @@ export default function ColorModal({ visible, closeModal ,colorsList,selectColor
                             {colorsList.map((item,index) => {
                                 return (
                                     <View key={index}>
-                                        <TouchableOpacity onPress={() => { selectColor(item.color_id) }}>
+                                        <TouchableOpacity onPress={() => { selectColor({
+                                            color_id:item.color_id,
+                                            color_name:item.color_name,
+                                            color_code:item.color_code
+                                        }) }}>
                                             <View style={{
                                                 height: 30,
                                                 width: 30,
@@ -54,7 +61,7 @@ export default function ColorModal({ visible, closeModal ,colorsList,selectColor
                             })}
                         </View>
                         <View style={styles.button}>
-                            <Button title='Filter' color={'#b8b8b8'} onPress={() => { console.log('Button Pressed') }}></Button>
+                            <Button title='Filter' color={'#b8b8b8'} onPress={() => { productByColor() }}></Button>
                         </View>
                     </View>
                 </View>

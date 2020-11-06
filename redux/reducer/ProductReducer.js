@@ -10,6 +10,7 @@ const initialState = {
     category:{},
     colors:[],
     loading: true,
+    isLoading:true,
     error: ''
 }
 
@@ -18,7 +19,7 @@ const ProductReducer = (state = initialState, action) => {
             case 'GET_PRODUCTDETAIL_REQUEST':{
                 return{
                     ...state,
-                    loading:true
+                    isLoading:true
                 }
             }
 
@@ -26,14 +27,14 @@ const ProductReducer = (state = initialState, action) => {
                 return{
                     ...state,
                     productDetail:action.data,
-                    loading:false,
+                    isLoading:false,
                     error:''
                 }
             }
             case 'GET_PRODUCTDETAIL_FALIURE':{
                 return{
                     ...state,
-                    loading:false,
+                    isLoading:false,
                     productDetail:{},
                     error:action.data
                 }

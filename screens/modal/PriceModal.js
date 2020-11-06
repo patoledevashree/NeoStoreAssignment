@@ -8,11 +8,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome5';
  *              on the prices i.e Low to High or High to Low
  * @param {object} visible It constains the visibility of the modal 
  * @param {function} closeModal This function is call to cxlose the modal
+ * @param {function} selectPrice function to select price
+ * @param {function} productByPrice function to call api
  * @returns JSX of Modal
  */
 
-export default function PriceModal({ visible, closeModal }) {
-    const [price,setPrice] = useState('')
+export default function PriceModal({ visible, closeModal,selectPrice,productByPrice }) {
     return (
         <Modal
             transparent={true}
@@ -35,7 +36,10 @@ export default function PriceModal({ visible, closeModal }) {
                             />
                         </View>
                         <View style={{ marginTop: 10 }}>
-                            <TouchableOpacity onPress={()=>{setPrice('low')}}>
+                            <TouchableOpacity onPress={()=>{selectPrice({
+                                 sortBy:'product_cost',
+                                 sortIn:false
+                            })}}>
                                 <View style={styles.container}>
                                     <Text style={{
                                         fontSize: 20,
@@ -45,7 +49,10 @@ export default function PriceModal({ visible, closeModal }) {
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={()=>{setPrice('high')}}>
+                            <TouchableOpacity onPress={()=>{selectPrice({
+                                 sortBy:'product_cost',
+                                 sortIn:true
+                            })}}>
                                 <View style={styles.container}>
                                     <Text style={{
                                         fontSize: 20,
@@ -57,7 +64,7 @@ export default function PriceModal({ visible, closeModal }) {
                         </View>
                         <View style={styles.button}>
                             <Button title='Filter' color={'#b8b8b8'}
-                                onPress={() => { console.log(price) }}></Button>
+                                onPress={() => { productByPrice() }}></Button>
                         </View>
                     </View>
                 </View>

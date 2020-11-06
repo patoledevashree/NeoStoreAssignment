@@ -65,7 +65,6 @@ function Dashboard(props) {
     }
 
     const handleSearch = () => {
-        console.log(query)
         axios.get(`http://180.149.241.208:3022/getProductBySearchText/${query}`)
             .then(response => {
                 const data = response.data.product_details
@@ -117,8 +116,11 @@ function Dashboard(props) {
                                     <Swiper autoplay>
                                         {props.categoryList.map((item, index) => {
                                             return (
+                                                
                                                 <View key={index} style={styles.slide}>
-                                                    <TouchableOpacity>
+                                                    <TouchableOpacity onPress={()=>{navigation.navigate('Product',{
+                                                        productId:item.category_id
+                                                    })}}>
                                                         <Image
                                                             source={{
                                                                 uri: `http://180.149.241.208:3022/${item.product_image}`
@@ -158,7 +160,6 @@ function Dashboard(props) {
                                 </TouchableOpacity>
                             </View>
                             <View style={{ backgroundColor: '#e7e7e7', marginBottom: 40 }}>
-                                {console.log(props.topRatedProduct)}
                                 {props.topRatedProduct.map((item, index) => {
                                     return (
                                         <View key={index} style={styles.cardWrapper}>

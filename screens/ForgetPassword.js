@@ -43,13 +43,11 @@ export default function ForgetPassword() {
                     initialValues={{ email: '' }}
                     validationSchema={validationschema}
                     onSubmit={(values) => {
-                        console.log(values)
                         axois.post('http://180.149.241.208:3022/forgotPassword',{
                             email:values.email
                         })
                         .then(response=>{
                             const data = response.data
-                            console.log(response)
                             Toast.show(response.data.message)
                             navigation.navigate('SetPassword',{token:data.token})
                         })

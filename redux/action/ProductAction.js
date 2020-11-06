@@ -54,10 +54,12 @@ export const getProductDetail = (id) => {
         dispatch(productDetailRequest())
         axios.get('http://180.149.241.208:3022/getProductByProdId/' + id)
             .then(response => {
+                console.log('response',response)
                 const detail = response.data.product_details[0]
                 dispatch(productDetailSuccess(detail))
             })
             .catch(error => {
+                console.log('error',error.response)
                 dispatch(productDetailFaliure(error))
             })
     }

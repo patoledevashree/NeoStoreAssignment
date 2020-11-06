@@ -123,7 +123,6 @@ export default function Register() {
                                     gender: values.Gender
                                 })
                                     .then(response => {
-                                        console.log(response)
                                         Toast.show('Registered Successfully')
                                         navigation.navigate('Login')
                                     })

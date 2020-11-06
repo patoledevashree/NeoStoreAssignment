@@ -62,7 +62,6 @@ export default function EditAddress({ route }) {
                 >
                     {(props) => (
                         <View>
-                            {console.log('details', detail)}
                             <View>
                                 <FontAwesome name='address-card' size={25} color={'#777'}
                                     style={styles.icon}

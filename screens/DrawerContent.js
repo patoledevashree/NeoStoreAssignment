@@ -11,9 +11,14 @@ import { SignOut } from '../redux/action/SignOutAction';
 import Toast from 'react-native-simple-toast';
 
 
+/**
+ * @author Devashree Patole
+ * @description This screen is to create a custom drawer  for the screens for navigation
+ * @param {*} props of all the screen to be display in drawer navigation 
+ * @returns JSX of custom drawer
+ */
 function DrawerContent({ ...props }) {
     const [loggedin, setlogin] = useState(true)
-    console.log(props.userData)
 
     const showTost = () => {
         props.SignOut()
@@ -165,9 +170,6 @@ function DrawerContent({ ...props }) {
         return (
             <View style={{ flex: 1 }}>
                 <DrawerContentScrollView {...props}>
-                    {/* <Drawer.Section>
-                        <DrawerItemList {...props} />
-                    </Drawer.Section> */}
                     <Drawer.Section>
                         <DrawerItem
                             icon={({ color, size }) => (
@@ -229,6 +231,7 @@ function DrawerContent({ ...props }) {
                                 fontSize: 18,
                                 fontWeight: 'bold'
                             }}
+                            onPress={() => { props.navigation.navigate('Product') }}
                         />
                     </Drawer.Section>
                     <Drawer.Section>

@@ -30,6 +30,7 @@ const validationSchema = yup.object({
 /**
  * @author Devashree Patole
  * @description This is  a Login Screen where user can login with username  and password.
+ * @param {function} login this function is to call the login api
  * @returns JSX of Login screen.
  */
 
@@ -63,7 +64,6 @@ function Login({ userData, login }) {
                     }}
                     validationSchema={validationSchema}
                     onSubmit={(values, action) => {
-                        console.log(values)
                         login(values)
                         navigation.navigate('Dashboard')
                         action.resetForm({

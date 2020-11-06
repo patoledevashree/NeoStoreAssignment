@@ -5,10 +5,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Cart from '../screens/Cart';
-import ProductStack from '../navigation/ProductStack';
 import { View, Text } from 'react-native';
 import ProductDetail from '../screens/ProductDetail';
-
+import Product from '../screens/Product';
 
 const Stack = createStackNavigator();
 
@@ -64,7 +63,7 @@ export default function DashboardStack() {
                     },
                 }}
             />
-            <Stack.Screen name='Product' component={ProductStack}
+            <Stack.Screen name='Product' component={Product}
                 options={{
                     title: 'Product',
                     headerStyle: {

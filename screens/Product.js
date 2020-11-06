@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ImageBackground, TouchableOpacity, Modal, FlatList } from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text, ImageBackground, TouchableOpacity, ActivityIndicator, FlatList
+} from 'react-native';
 import StarRating from './StarRating';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import CategoryModal from './modal/CategoryModal';
@@ -11,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { getCategories, getColors } from '../redux/action/ProductAction';
 import axios from 'axios'
+import Chips from './Chips';
 
 /**
  * @author Devashree Patole
@@ -21,32 +26,45 @@ import axios from 'axios'
 
 function Product(props) {
     useEffect(() => {
-        console.log('UseEffect')
         props.getCategories();
         props.getColors();
         getProducts();
-      
+
     }, [])
 
     const navigation = useNavigation();
     const [categoryVisible, setCategory] = useState(false);
     const [priceVisible, setPrice] = useState(false);
     const [colorVisible, setColor] = useState(false)
-    const [selectedCategory, setSelectCategory] = useState('')
-    const [selectedColor, setSelectedColor] = useState('')
-    const [isLoading,setLoading] = useState(true)
+    const [selectedCategory, setSelectCategory] = useState({})
+    const [selectedColor, setSelectedColor] = useState({})
+    const [isLoading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
-    const [displayProduct,setDisplay] = useState([]);
-    const [productList,setProduct] = useState({})
-   
+    const [displayProduct, setDisplay] = useState([]);
+    const [productList, setProduct] = useState({})
+    const [selectedPrice, setSelectedPrice] = useState({})
+
     const category = props.categoryList;
     const getProducts = () => {
-        console.log('apicall')
-        axios.get('http://180.149.241.208:3022/commonProducts')
+        let item
+        props.route.params?.productId ? item = props.route.params?.productId : item = ''
+        axios.get('http://180.149.241.208:3022/commonProducts', {
+            params: {
+                category_id: item,
+                color_id: selectedColor.color_id,
+                sortBy: selectedPrice.sortBy,
+                sortIn: selectedPrice.sortIn
+            }
+        })
             .then(response => {
-                console.log(response)
-                setProduct(response.data) 
-                setDisplay(response.data.product_details.slice(0,5))
+                if (response.data.message === "No Product is available") {
+                    setProduct({})
+                    setDisplay([])
+                }
+                else {
+                    setProduct(response.data)
+                    setDisplay(response.data.product_details.slice(0, 5))
+                }
                 setLoading(false)
             })
             .catch(error => {
@@ -55,40 +73,180 @@ function Product(props) {
             })
     }
 
-    const handleLoadMore = () => {
-       let start= page *5;
-       let end = (page + 1 )*5;
-       if(end > productList.product_details.length){
-           end = productList.product_details.length;
-       }
-       const productData = productList.product_details.slice(start,end)
-       setDisplay((prevState)=>{
-                return [...prevState,...productData]
-       })
-       setPage((prev)=>{
-           return prev+1
-       })
+    const clearCategoryProducts = () => {
+        let colorId
+        { selectedColor.color_id === '' ? colorId = '' : colorId = selectedColor.color_id }
+        axios.get('http://180.149.241.208:3022/commonProducts', {
+            params: {
+                category_id: '',
+                color_id: colorId
+            }
+        })
+            .then(response => {
+                if (response.data.message === "No Product is available") {
+                    setProduct({})
+                    setDisplay([])
+                }
+                else {
+                    setProduct(response.data)
+                    setDisplay(response.data.product_details.slice(0, 5))
+                }
+                setLoading(false)
+            })
+            .catch(error => {
+                console.log(error.response.data)
+                setLoading(false)
+            })
     }
 
-    // const handleLoader = () => {
-    //     console.log('Loading')
-    // }
+    const clearColorProducts = () => {
+        let categoryId
+        { selectedCategory.category_id === '' ? categoryId = '' : categoryId = selectedCategory.category_id }
+        setSelectedColor({
+            color_id: '',
+            color_name: '',
+            color_code: ''
+        })
+        axios.get('http://180.149.241.208:3022/commonProducts', {
+            params: {
+                category_id: categoryId,
+                color_id: ''
+            }
+        })
+            .then(response => {
+                if (response.data.message === "No Product is available") {
+                    setProduct({})
+                    setDisplay([])
+                }
+                else {
+                    setProduct(response.data)
+                    setDisplay(response.data.product_details.slice(0, 5))
+                }
+                setLoading(false)
+            })
+            .catch(error => {
+                console.log(error.response.data)
+                setLoading(false)
+            })
+    }
+
+    const getProductsRating = () => {
+        axios.get('http://180.149.241.208:3022/commonProducts', {
+            params: {
+                sortBy: 'product_rating',
+                sortIn: true
+            }
+        })
+            .then(response => {
+                setProduct(response.data)
+                setDisplay(response.data.product_details.slice(0, 5))
+                setLoading(false)
+            })
+            .catch(error => {
+                console.log(error.response.data)
+                setLoading(false)
+            })
+    }
+
+
+    const handleLoadMore = () => {
+        let start = page * 5;
+        let end = (page + 1) * 5;
+        if (end > productList.product_details.length) {
+            end = productList.product_details.length;
+        }
+        const productData = productList.product_details.slice(start, end)
+        setDisplay((prevState) => {
+            return [...prevState, ...productData]
+        })
+        setPage((prev) => {
+            return prev + 1
+        })
+    }
+
+    const handleLoader = () => {
+        if (displayProduct.length === productList?.product_details?.length) {
+            return (
+                <View></View>
+            )
+        }
+        else {
+            return (
+                <ActivityIndicator size={"large"} color={'blue'} />
+            )
+        }
+    }
 
     const selectCategory = (val) => {
         setSelectCategory(val)
-        console.log(selectedCategory)
     }
 
     const selectColor = (color) => {
         setSelectedColor(color)
-        console.log(selectedColor)
+    }
+    const selectPrice = (val) => {
+        setSelectedPrice(val)
     }
     const closeModal = () => {
         setCategory(false);
+        setSelectCategory({
+            category_id: '',
+            category_name: ''
+        })
         setPrice(false);
+        setSelectedPrice({
+            sortBy: '',
+            sortIn: ''
+        })
         setColor(false);
+        setSelectedColor({
+            color_id: '',
+            color_name: '',
+            color_code: ''
+        })
     }
 
+    const productByCategory = () => {
+        setCategory(false)
+        setLoading(true)
+        clearColorProducts();
+    }
+
+    const clearCategory = () => {
+        setLoading(true);
+        setSelectCategory({
+            category_id: '',
+            category_name: ''
+        })
+        clearCategoryProducts();
+    }
+
+    const productByColor = () => {
+        setColor(false);
+        setLoading(true)
+        getProducts();
+    }
+
+    const clearColor = () => {
+        setLoading(true);
+        setSelectedColor({
+            color_id: '',
+            color_name: '',
+            color_code: ''
+        })
+        clearColorProducts();
+    }
+
+    const productByPrice = () => {
+        setPrice(false);
+        setLoading(true);
+        getProducts();
+    }
+
+    const productByRating = () => {
+        setLoading(true);
+        getProductsRating();
+    }
 
     if (isLoading) {
         return <LottieView source={require('../assests/images/4383-circle-loader.json')} autoPlay loop />
@@ -96,85 +254,108 @@ function Product(props) {
     else {
         return (
             <View style={{ flex: 1 }}>
-               {console.log(productList)}
-                <FlatList
-                    data={displayProduct}
-                    keyExtractor={(item) => {
-                        return  item._id
-                    }}
-                    onEndReached={handleLoadMore}
-                    onEndReachedThreshold={1}
-                    // ListFooterComponent={handleLoader}
-                    renderItem={({ item, index }) => (
-                        <View style={{ backgroundColor: '#e7e7e7', marginBottom: 5, marginTop: 5 }}>
-                            <View style={styles.cardWrapper}>
-                                <TouchableOpacity onPress={() => {
-                                    navigation.navigate('ProductDetail', {
-                                        data: item.product_id,
-                                        product_name: item.product_name
-                                    })
-                                }}>
-                                    <View style={styles.card}>
-                                        <View style={styles.cardImgWrapper}>
-                                            <ImageBackground
-                                                source={{
-                                                    uri: `http://180.149.241.208:3022/${item.product_image}`
-                                                }}
-                                                resizeMode='cover'
-                                                style={styles.cardImg}
-                                            >
-                                                <View style={styles.productView}>
-                                                    <Text style={index % 2 == 0 ? styles.textHeadRight : styles.textHeadLeft}>
-                                                        {item.product_name}
-                                                    </Text>
-                                                    <View style={index % 2 == 0 ? styles.rateRight : styles.rateLeft}>
-                                                        <Rating
-                                                            count={5}
-                                                            startingValue={Number(item.product_rating)}
-                                                            imageSize={20}
-                                                            readonly={true}
-                                                            showRating={false}
-                                                            tintColor="rgba( 0, 0, 0, 0.5 )"
-                                                            type={"custom"}
-                                                        />
-                                                    </View>
-                                                    <Text style={index % 2 == 0 ? styles.textRight : styles.textLeft}>
-                                                        {'\u20B9'}{item.product_cost}
-                                                    </Text>
-                                                </View>
-                                            </ImageBackground>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                <View style={{ flexDirection: 'row' }}>
+                    {selectedCategory.category_name === undefined || selectedCategory.category_name === '' ? <View></View> :
+                        <Chips text={selectedCategory.category_name} color={'#777'} clearFilter={clearCategory} />}
 
-                    )}
-                />
+                    {selectedColor.color_name === undefined || selectedColor.color_name === '' ? <View></View> :
+                        <Chips text={selectedColor.color_name} color={selectedColor.color_code} clearFilter={clearColor} />}
+                </View>
+                {displayProduct.length === 0 ?
+                    <View style={{ marginVertical: 20 }}>
+                        <FontAwesome
+                            name='frown-open' size={200} color={'#e7e7e7'}
+                            style={{
+                                marginHorizontal: 100, marginVertical: 10
+                            }} />
+                        <Text style={{
+                            fontSize: 35,
+                            color: '#777',
+                            textAlign: 'center'
+                        }}>No data found!!</Text>
+                    </View> :
+
+                    <View style={{ marginBottom: 90 }}>
+                        <FlatList
+                            data={displayProduct}
+                            keyExtractor={(item) => {
+                                return item._id
+                            }}
+                            onEndReached={handleLoadMore}
+                            onEndReachedThreshold={1}
+                            ListFooterComponent={handleLoader}
+                            renderItem={({ item, index }) => (
+                                <View style={{ backgroundColor: '#e7e7e7', marginBottom: 5, marginTop: 5 }}>
+                                    <View style={styles.cardWrapper}>
+                                        <TouchableOpacity onPress={() => {
+                                            navigation.navigate('ProductDetail', {
+                                                data: item.product_id,
+                                                product_name: item.product_name
+                                            })
+                                        }}>
+                                            <View style={styles.card}>
+                                                <View style={styles.cardImgWrapper}>
+                                                    <ImageBackground
+                                                        source={{
+                                                            uri: `http://180.149.241.208:3022/${item.product_image}`
+                                                        }}
+                                                        resizeMode='cover'
+                                                        style={styles.cardImg}
+                                                    >
+                                                        <View style={styles.productView}>
+                                                            <Text style={index % 2 == 0 ? styles.textHeadRight : styles.textHeadLeft}>
+                                                                {item.product_name}
+                                                            </Text>
+                                                            <View style={index % 2 == 0 ? styles.rateRight : styles.rateLeft}>
+                                                                <Rating
+                                                                    count={5}
+                                                                    startingValue={Number(item.product_rating)}
+                                                                    imageSize={20}
+                                                                    readonly={true}
+                                                                    showRating={false}
+                                                                    tintColor="rgba( 0, 0, 0, 0.5 )"
+                                                                    type={"custom"}
+                                                                />
+                                                            </View>
+                                                            <Text style={index % 2 == 0 ? styles.textRight : styles.textLeft}>
+                                                                {'\u20B9'}{item.product_cost}
+                                                            </Text>
+                                                        </View>
+                                                    </ImageBackground>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
+                            )}
+                        />
+                    </View>
+                }
                 <View style={styles.footer}>
                     <TouchableOpacity onPress={() => { setCategory(true) }}>
-                        <View style={{ padding: 10 }}>
+                        <View style={{ paddingVertical: 10, paddingLeft: 50 }}>
                             <FontAwesome name='list-alt' color={'black'} size={25} style={styles.icon} />
                             <Text style={{ fontWeight: 'bold' }}>Catogery</Text>
                         </View>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => { setColor(true) }}>
-                        <View style={{ padding: 10 }}>
+                        <View style={{ paddingVertical: 10, paddingLeft: 50 }}>
                             <FontAwesome name='palette' color={'black'} size={25} style={styles.icon} />
                             <Text style={{ fontWeight: 'bold' }}>Color</Text>
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
-                        <View style={{ padding: 10 }}>
+                    <TouchableOpacity onPress={() => { productByRating() }}>
+                        <View style={{ paddingVertical: 10, paddingLeft: 50 }}>
                             <FontAwesome name='star' color={'black'} size={25} style={styles.icon} />
                             <Text style={{ fontWeight: 'bold' }}>Rating</Text>
                         </View>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => { setPrice(true) }}>
-                        <View style={{ padding: 10 }}>
+                        <View style={{ paddingVertical: 10, paddingLeft: 50, paddingRight: 50 }}>
                             <FontAwesome name='rupee-sign' color={'black'} size={25} style={styles.icon} />
                             <Text style={{ fontWeight: 'bold' }}>Price</Text>
                         </View>
@@ -185,13 +366,20 @@ function Product(props) {
                     visible={categoryVisible}
                     closeModal={closeModal}
                     selectCategory={selectCategory}
-                    categoryList={category.length > 0 ? category : []} />
-                <PriceModal visible={priceVisible} closeModal={closeModal} />
+                    categoryList={category.length > 0 ? category : []}
+                    productByCategory={productByCategory} />
+                <PriceModal
+                    visible={priceVisible}
+                    closeModal={closeModal}
+                    selectPrice={selectPrice}
+                    productByPrice={productByPrice}
+                />
                 <ColorModal
                     visible={colorVisible}
                     closeModal={closeModal}
                     selectColor={selectColor}
                     colorsList={props.colors}
+                    productByColor={productByColor}
                 />
             </View>
         )
@@ -251,12 +439,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.8,
         shadowRadius: 2,
         borderTopColor: '#777',
-        position: 'relative',
+        position: 'absolute',
         shadowColor: '#777',
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         backgroundColor: '#e7e7e7',
-        borderTopWidth: 1
+        borderTopWidth: 1,
+        bottom: 0
     },
     textHeadLeft: {
         color: 'white',

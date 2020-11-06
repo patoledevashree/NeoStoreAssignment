@@ -9,9 +9,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome5';
  *               and based on that the products will be filtered.
  * @param {object} visible It constains the visibility of the modal 
  * @param {function} closeModal This function is call to cxlose the modal
+ * @param {object} categoryList List of categories
+ * @param {function} selectCategory function to store category
+ * @param {function} productByCategory function to call api
  * @returns JSX of Modal
  */
-export default function CategoryModal({ visible, closeModal,categoryList,selectCategory }) {
+export default function CategoryModal({ visible, closeModal,categoryList,selectCategory,productByCategory }) {
     const [selectedCategory, setCategory] = useState('')
     return (
 
@@ -39,7 +42,10 @@ export default function CategoryModal({ visible, closeModal,categoryList,selectC
                             {categoryList.map((item,index) => {
                                 return (
                                     <View key={index}>
-                                        <TouchableOpacity onPress={() => { selectCategory(item.category_name) }}>
+                                        <TouchableOpacity onPress={() => { selectCategory({
+                                            category_id:item.category_id,
+                                            category_name:item.category_name
+                                        }) }}>
                                             <View style={styles.container}>
                                                 <Text style={{
                                                     fontSize: 20,
@@ -54,7 +60,7 @@ export default function CategoryModal({ visible, closeModal,categoryList,selectC
                         </View>
                         <View style={styles.button}>
                             <Button title='Filter' color={'#b8b8b8'}
-                                onPress={() => {console.log('Button Pressed') }}></Button>
+                                onPress={() => {productByCategory() }}></Button>
                         </View>
                     </View>
                 </View>
