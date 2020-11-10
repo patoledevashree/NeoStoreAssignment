@@ -17,6 +17,7 @@ import {connect} from 'react-redux';
 import {getProductDetail} from '../redux/action/ProductAction';
 import LottieView from 'lottie-react-native';
 import {useNavigation} from '@react-navigation/native';
+import {checkCart} from '../redux/action/CartAction';
 
 /**
  * @author Devashree Patole
@@ -37,9 +38,10 @@ function ProductDetail(props) {
   const productDetail = props.product;
   const [rate, setrating] = useState(false);
   const navigation = useNavigation();
+  const [cartItem, setItem] = useState([]);
 
   const addCart = () => {
-    Toast.show('Item Added to Cart', Toast.LONG);
+    props.checkCart(productDetail, props.cartData);
   };
 
   const closeModal = () => {
@@ -196,7 +198,7 @@ function ProductDetail(props) {
           <RatingModal
             visible={rate}
             closeModal={closeModal}
-            token={props.userData.data.token}
+            token={props.userData?.data?.token}
             productId={productDetail.product_id}
           />
         </ScrollView>
@@ -210,12 +212,14 @@ const mapStateToProps = (state) => {
     product: state.productReducer.productDetail,
     loading: state.productReducer.isLoading,
     userData: state.loginReducer.user,
+    cartData: state.cartReducer.cartData,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     getProductDetail: (id) => dispatch(getProductDetail(id)),
+    checkCart: (product, cartItem) => dispatch(checkCart(product, cartItem)),
   };
 };
 

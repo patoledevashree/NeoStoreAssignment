@@ -13,6 +13,7 @@ import Toast from 'react-native-simple-toast';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {Formik} from 'formik';
 import {connect} from 'react-redux';
+import {getCartData} from '../redux/action/CartAction';
 import LottieView from 'lottie-react-native';
 
 /**
@@ -22,9 +23,11 @@ import LottieView from 'lottie-react-native';
  *              and to remove products from cart
  * @returns JSX of cart Screen
  */
-
 function Cart(props) {
   const token = props.route.params.token;
+  useEffect(() => {
+    props.getCartData(token);
+  }, []);
   console.log('token', token);
   console.log('cartdata', props.cartData);
 
@@ -46,7 +49,6 @@ function Cart(props) {
     console.log('Item Removed');
     Toast.show('Item Removed from Cart');
   };
-  let count;
   if (props.loading) {
     return (
       <LottieView
@@ -60,94 +62,83 @@ function Cart(props) {
       <View style={{flex: 1}}>
         <ScrollView>
           <View style={styles.container}>
-            {props.cartData.map((item, index) => {
+            {props.cartData?.product_details.map((item, index) => {
               return (
-                <View key={index}>
-                  <Formik
-                    initialValues={{quantity: item.quantity}}
-                    onSubmit={(values) => {
-                      cartItem.quantity = values.quantity;
-                      console.log('onsubmit', cartItem);
-                    }}>
-                    {(props) => (
-                      <View key={index} style={styles.card}>
-                        <View style={styles.cardImgWrapper}>
-                          <Image
-                            source={{
-                              uri: `http://180.149.241.208:3022/${item.product_id.product_image}`,
-                            }}
-                            resizeMode="cover"
-                            style={styles.cardImg}
-                          />
+                <Formik
+                  initialValues={{quantity: item.quantity}}
+                  onSubmit={(values) => {}}>
+                  {(props) => (
+                    <View key={index} style={styles.card}>
+                      <View style={styles.cardImgWrapper}>
+                        <Image
+                          source={{
+                            uri: `http://180.149.241.208:3022/${item.product_id.product_image}`,
+                          }}
+                          // resizeMode="contain"
+                          style={styles.cardImg}
+                        />
+                      </View>
+                      <View style={styles.cardInfo}>
+                        <Text style={styles.cardTitle}>
+                          {item.product_id.product_name}
+                        </Text>
+                        <Text style={styles.cardDetail}>
+                          Quantity : {props.values.quantity}
+                        </Text>
+                        <Text style={{...styles.cardDetail, color: '#eb9800'}}>
+                          {'\u20B9'}
+                          {item.product_cost}
+                        </Text>
+
+                        <View style={{flexDirection: 'row', left: 100}}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              props.values.quantity < 5
+                                ? props.setFieldValue(
+                                    'quantity',
+                                    props.values.quantity + 1,
+                                  )
+                                : Toast.show('Limit Exceeded');
+                            }}>
+                            <Text style={styles.countButton}>+</Text>
+                          </TouchableOpacity>
+
+                          <Text style={styles.countButton}>
+                            {props.values.quantity}
+                          </Text>
+
+                          <TouchableOpacity
+                            onPress={() => {
+                              props.values.quantity > 1
+                                ? props.setFieldValue(
+                                    'quantity',
+                                    props.values.quantity - 1,
+                                  )
+                                : Toast.show('Quantity must be 1');
+                            }}>
+                            <Text style={styles.countButton}>-</Text>
+                          </TouchableOpacity>
                         </View>
-                        <View style={styles.cardInfo}>
-                          <Text style={styles.cardTitle}>
-                            {item.product_id.product_name}
-                          </Text>
-                          <Text style={styles.cardDetail}>
-                            Quantity : {props.values.quantity}
-                          </Text>
-                          <View style={{flexDirection: 'row'}}>
-                            <View>
-                              <Text
-                                style={{
-                                  ...styles.cardDetail,
-                                  color: '#eb9800',
-                                }}>
-                                {'\u20B9'}
-                                {item.product_cost}
-                              </Text>
-                            </View>
-                            <View style={{flexDirection: 'row', left: 50}}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  props.values.quantity < 5
-                                    ? props.setFieldValue(
-                                        'quantity',
-                                        props.values.quantity + 1,
-                                      )
-                                    : Toast.show('Limit Exceeded');
-                                }}>
-                                <Text style={styles.countButton}>+</Text>
-                              </TouchableOpacity>
-
-                              <Text style={styles.countButton}>
-                                {props.values.quantity}
-                              </Text>
-
-                              <TouchableOpacity
-                                onPress={() => {
-                                  props.values.quantity > 1
-                                    ? props.setFieldValue(
-                                        'quantity',
-                                        props.values.quantity - 1,
-                                      )
-                                    : Toast.show('Quantity must be 1');
-                                }}>
-                                <Text style={styles.countButton}>-</Text>
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                          <View style={styles.icon}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                removeItem();
-                              }}>
-                              <FontAwesome
-                                name="times"
-                                size={15}
-                                color={'#444'}
-                                style={{padding: 5}}
-                              />
-                            </TouchableOpacity>
-                          </View>
+                        <View style={styles.icon}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              removeItem();
+                            }}>
+                            <FontAwesome
+                              name="times"
+                              size={15}
+                              color={'#444'}
+                              style={{padding: 5}}
+                            />
+                          </TouchableOpacity>
                         </View>
                       </View>
-                    )}
-                  </Formik>
-                </View>
+                    </View>
+                  )}
+                </Formik>
               );
             })}
+
             <View
               style={{
                 flexDirection: 'row',
@@ -167,9 +158,7 @@ function Cart(props) {
                 </Text>
               </View>
               <View style={{paddingRight: 10}}>
-                <Text style={{fontSize: 18}}>
-                  {'\u20B9'} {count}{' '}
-                </Text>
+                <Text style={{fontSize: 18}}>{'\u20B9'} 2,000</Text>
                 <Text style={{fontSize: 18}}>{'\u20B9'} 200</Text>
                 <Text style={{fontSize: 18}}>{'\u20B9'} 20</Text>
                 <Text style={{fontSize: 18}}> {'\u20B9'} 2220</Text>
@@ -199,6 +188,12 @@ const mapStateToProps = (state) => {
   };
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getCartData: (token) => dispatch(getCartData(token)),
+  };
+};
+
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
@@ -211,7 +206,6 @@ const styles = StyleSheet.create({
   },
   card: {
     marginTop: 6,
-    height: 150,
     marginBottom: 20,
     flexDirection: 'row',
     shadowColor: '#777',
@@ -222,7 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   cardImgWrapper: {
-    flex: 1,
+    flex: 1.3,
   },
   cardImg: {
     height: '100%',
@@ -285,4 +279,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(Cart);
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);
