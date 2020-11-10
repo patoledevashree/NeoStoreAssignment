@@ -9,6 +9,9 @@ import {View, Text} from 'react-native';
 import ProductDetail from '../screens/ProductDetail';
 import Product from '../screens/Product';
 import {connect} from 'react-redux';
+import CartIcon from '../screens/CartIcon';
+import OrderSummary from '../screens/OrderSummary';
+import SelectAddress from '../screens/SelectAddress';
 
 const Stack = createStackNavigator();
 
@@ -44,33 +47,7 @@ function DashboardStack({userData, cartData}) {
               backgroundColor={'#2874F0'}
               onPress={() => navigation.openDrawer()}></Icon.Button>
           ),
-          headerRight: () => (
-            <View>
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                  zIndex: 1,
-                  backgroundColor: 'red',
-                  borderRadius: 30,
-                  width: 20,
-                  height: 20,
-                }}>
-                <Text style={{color: 'white', textAlign: 'center'}}>
-                  {cartData.length}
-                </Text>
-              </View>
-              <FontAwesome.Button
-                name="shopping-cart"
-                size={30}
-                color="white"
-                backgroundColor={'#2874F0'}
-                onPress={() =>
-                  navigation.navigate('Cart', {token: userData.data.token})
-                }></FontAwesome.Button>
-            </View>
-          ),
+          headerRight: () => <CartIcon />,
         }}
       />
       <Stack.Screen
@@ -114,6 +91,36 @@ function DashboardStack({userData, cartData}) {
             fontSize: 25,
           },
         })}
+      />
+
+      <Stack.Screen
+        name="OrderSummary"
+        component={OrderSummary}
+        options={{
+          title: 'OrderSummary',
+          headerStyle: {
+            backgroundColor: '#2874F0',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontSize: 25,
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="SelectAddress"
+        component={SelectAddress}
+        options={{
+          title: 'Select Address',
+          headerStyle: {
+            backgroundColor: '#2874F0',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontSize: 25,
+          },
+        }}
       />
     </Stack.Navigator>
   );

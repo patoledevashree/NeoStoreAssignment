@@ -15,6 +15,7 @@ import {useNavigation} from '@react-navigation/native';
 import {connect} from 'react-redux';
 import {login} from '../redux/action/LoginAction';
 import {getCartData} from '../redux/action/CartAction';
+import LottieView from 'lottie-react-native';
 
 const validationSchema = yup.object({
   email: yup.string().email().required(),
@@ -32,7 +33,7 @@ const validationSchema = yup.object({
  * @returns JSX of Login screen.
  */
 
-function Login({userData, login, getCartData}) {
+function Login({userData, login, getCartData, loading}) {
   useEffect(() => {
     if (userData?.data?.token != undefined) {
       getCartData(userData.data.token);
@@ -52,130 +53,140 @@ function Login({userData, login, getCartData}) {
       setIcon('eye-slash');
     }
   };
-  return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}>
-      <View style={styles.container}>
-        <Text style={styles.text}>
-          Neo<Text style={{color: '#2874F0'}}>Store</Text>
-        </Text>
-        <Formik
-          initialValues={{
-            email: '',
-            password: '',
-          }}
-          validationSchema={validationSchema}
-          onSubmit={(values, action) => {
-            login(values);
-            action.resetForm({
-              values: {
-                email: '',
-                password: '',
-              },
-            });
-          }}>
-          {(props) => (
-            <View>
-              <View style={{marginBottom: 5}}>
-                <FontAwesome
-                  style={{position: 'relative', top: 35, left: 15}}
-                  name="user"
-                  color="#777"
-                  size={20}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Email"
-                  onChangeText={props.handleChange('email')}
-                  value={props.values.email}
-                  onBlur={props.handleBlur('email')}
-                />
-                {props.touched.email && props.errors.email && (
-                  <Text style={styles.error}>
-                    {props.touched.email && props.errors.email}
-                  </Text>
-                )}
-              </View>
+
+  const Login = (values, action) => {
+    login(values);
+    action.resetForm();
+  };
+  if (loading) {
+    return (
+      <LottieView
+        source={require('../assests/images/4383-circle-loader.json')}
+        autoPlay
+        loop
+      />
+    );
+  } else {
+    return (
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}>
+        <View style={styles.container}>
+          <Text style={styles.text}>
+            Neo<Text style={{color: '#2874F0'}}>Store</Text>
+          </Text>
+          <Formik
+            initialValues={{
+              email: '',
+              password: '',
+            }}
+            validationSchema={validationSchema}
+            onSubmit={(values, action) => {
+              Login(values, action);
+            }}>
+            {(props) => (
               <View>
-                <FontAwesome
-                  style={{position: 'relative', top: 35, left: 15}}
-                  name="lock"
-                  color="#777"
-                  size={20}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  secureTextEntry={displayPassword}
-                  onChangeText={props.handleChange('password')}
-                  value={props.values.password}
-                  onBlur={props.handleBlur('password')}
-                />
-                <FontAwesome
-                  style={{position: 'absolute', top: 35, right: 5}}
-                  name={eye_icon}
-                  size={20}
-                  color="#777"
-                  onPress={handleClick}
-                />
-                {props.touched.password && props.errors.password && (
-                  <Text style={styles.error}>
-                    {props.touched.password && props.errors.password}
-                  </Text>
-                )}
-              </View>
-              <TouchableOpacity onPress={props.handleSubmit}>
-                <View style={styles.button}>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: 20,
-                      textAlign: 'center',
-                      padding: 5,
-                    }}>
-                    Login
-                  </Text>
+                <View style={{marginBottom: 5}}>
+                  <FontAwesome
+                    style={{position: 'relative', top: 35, left: 15}}
+                    name="user"
+                    color="#777"
+                    size={20}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    onChangeText={props.handleChange('email')}
+                    value={props.values.email}
+                    onBlur={props.handleBlur('email')}
+                  />
+                  {props.touched.email && props.errors.email && (
+                    <Text style={styles.error}>
+                      {props.touched.email && props.errors.email}
+                    </Text>
+                  )}
                 </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('ForgetPassword');
-                }}>
-                <Text style={styles.underLineText}>Forget Password?</Text>
-              </TouchableOpacity>
-
-              <View style={{marginTop: 30, flexDirection: 'row'}}>
                 <View>
-                  <Text style={styles.textInput}>Don't Have an Account?</Text>
+                  <FontAwesome
+                    style={{position: 'relative', top: 35, left: 15}}
+                    name="lock"
+                    color="#777"
+                    size={20}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    secureTextEntry={displayPassword}
+                    onChangeText={props.handleChange('password')}
+                    value={props.values.password}
+                    onBlur={props.handleBlur('password')}
+                  />
+                  <FontAwesome
+                    style={{position: 'absolute', top: 35, right: 5}}
+                    name={eye_icon}
+                    size={20}
+                    color="#777"
+                    onPress={handleClick}
+                  />
+                  {props.touched.password && props.errors.password && (
+                    <Text style={styles.error}>
+                      {props.touched.password && props.errors.password}
+                    </Text>
+                  )}
                 </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('Register');
-                  }}>
-                  <View>
-                    <FontAwesome
-                      style={styles.icon}
-                      name="plus"
-                      size={40}
-                      color={'white'}
-                    />
+                <TouchableOpacity onPress={props.handleSubmit}>
+                  <View style={styles.button}>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 20,
+                        textAlign: 'center',
+                        padding: 5,
+                      }}>
+                      Login
+                    </Text>
                   </View>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('ForgetPassword');
+                  }}>
+                  <Text style={styles.underLineText}>Forget Password?</Text>
+                </TouchableOpacity>
+
+                <View style={{marginTop: 30, flexDirection: 'row'}}>
+                  <View>
+                    <Text style={styles.textInput}>Don't Have an Account?</Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('Register');
+                    }}>
+                    <View>
+                      <FontAwesome
+                        style={styles.icon}
+                        name="plus"
+                        size={40}
+                        color={'white'}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
-        </Formik>
-      </View>
-    </TouchableWithoutFeedback>
-  );
+            )}
+          </Formik>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
 }
 
 const mapStateToProps = (state) => {
   return {
     userData: state.loginReducer.user,
+    loading: state.loginReducer.loading,
   };
 };
 

@@ -6,6 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {connect} from 'react-redux';
 import {SignOut} from '../redux/action/SignOutAction';
 import Toast from 'react-native-simple-toast';
+import {emptyCart} from '../redux/action/CartAction';
 
 /**
  * @author Devashree Patole
@@ -18,6 +19,7 @@ function DrawerContent({...props}) {
 
   const showTost = () => {
     props.SignOut(props.cartData, props.userData.data.token);
+    props.emptyCart();
     props.navigation.closeDrawer();
     Toast.show('You Successfully Logged Out', Toast.LONG);
   };
@@ -263,7 +265,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    SignOut: () => dispatch(SignOut()),
+    SignOut: (cartItem, token) => dispatch(SignOut(cartItem, token)),
+    emptyCart: () => dispatch(emptyCart()),
   };
 };
 

@@ -11,9 +11,14 @@ import {
 import {ScrollView} from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
-import {Formik} from 'formik';
 import {connect} from 'react-redux';
-import LottieView from 'lottie-react-native';
+import {
+  increamentQuantity,
+  removeFromCart,
+  decrementQuantity,
+} from '../redux/action/CartAction';
+import {deleteCart} from '../redux/action/CartAction';
+import {useNavigation} from '@react-navigation/native';
 
 /**
  * @author Devashree Patole
@@ -24,16 +29,19 @@ import LottieView from 'lottie-react-native';
  */
 
 function Cart(props) {
-  const token = props.route.params.token;
-  console.log('token', token);
-  console.log('cartdata', props.cartData);
-
-  const removeItem = () => {
+  const navigation = useNavigation();
+  let count = 0;
+  for (let i = 0; i < props.cartData.length; i++) {
+    count = count + parseInt(props.cartData[i].total_productCost);
+  }
+  let gst = parseInt(count * 0.05);
+  let total = count + gst;
+  const removeItem = (item) => {
     Alert.alert('Remove Item', 'Do You ant to Remove Item from cart', [
       {
         text: 'OK',
         onPress: () => {
-          showToast();
+          showToast(item);
         },
       },
       {
@@ -42,109 +50,108 @@ function Cart(props) {
     ]);
   };
 
-  const showToast = () => {
-    console.log('Item Removed');
+  const showToast = (item) => {
+    console.log('item', item);
+    props.removeFromCart(item);
+    if (props.userData.length !== 0) {
+      props.deleteCart(item, props.userData.data.token);
+    }
     Toast.show('Item Removed from Cart');
   };
-  let count;
-  if (props.loading) {
+
+  if (props.cartData.length === 0) {
     return (
-      <LottieView
-        source={require('../assests/images/4383-circle-loader.json')}
-        autoPlay
-        loop
-      />
+      <View style={{marginVertical: 20}}>
+        <FontAwesome
+          name="frown-open"
+          size={200}
+          color={'#e7e7e7'}
+          style={{
+            marginHorizontal: 100,
+            marginVertical: 10,
+          }}
+        />
+        <Text
+          style={{
+            fontSize: 35,
+            color: '#777',
+            textAlign: 'center',
+          }}>
+          No Product in Cart
+        </Text>
+      </View>
     );
   } else {
     return (
       <View style={{flex: 1}}>
-        <ScrollView>
-          <View style={styles.container}>
+        <View style={styles.container}>
+          <ScrollView>
             {props.cartData.map((item, index) => {
               return (
                 <View key={index}>
-                  <Formik
-                    initialValues={{quantity: item.quantity}}
-                    onSubmit={(values) => {
-                      cartItem.quantity = values.quantity;
-                      console.log('onsubmit', cartItem);
-                    }}>
-                    {(props) => (
-                      <View key={index} style={styles.card}>
-                        <View style={styles.cardImgWrapper}>
-                          <Image
-                            source={{
-                              uri: `http://180.149.241.208:3022/${item.product_id.product_image}`,
-                            }}
-                            resizeMode="cover"
-                            style={styles.cardImg}
-                          />
+                  <View key={index} style={styles.card}>
+                    <View style={styles.cardImgWrapper}>
+                      <Image
+                        source={{
+                          uri: `http://180.149.241.208:3022/${item.product_id.product_image}`,
+                        }}
+                        resizeMode="cover"
+                        style={styles.cardImg}
+                      />
+                    </View>
+                    <View style={styles.cardInfo}>
+                      <Text style={styles.cardTitle}>
+                        {item.product_id.product_name}
+                      </Text>
+                      <Text style={styles.cardDetail}>
+                        Quantity : {item.quantity}
+                      </Text>
+                      <View style={{flexDirection: 'row'}}>
+                        <View>
+                          <Text
+                            style={{
+                              ...styles.cardDetail,
+                              color: '#eb9800',
+                            }}>
+                            {'\u20B9'}
+                            {item.total_productCost}
+                          </Text>
                         </View>
-                        <View style={styles.cardInfo}>
-                          <Text style={styles.cardTitle}>
-                            {item.product_id.product_name}
-                          </Text>
-                          <Text style={styles.cardDetail}>
-                            Quantity : {props.values.quantity}
-                          </Text>
-                          <View style={{flexDirection: 'row'}}>
-                            <View>
-                              <Text
-                                style={{
-                                  ...styles.cardDetail,
-                                  color: '#eb9800',
-                                }}>
-                                {'\u20B9'}
-                                {item.product_cost}
-                              </Text>
-                            </View>
-                            <View style={{flexDirection: 'row', left: 50}}>
-                              <TouchableOpacity
-                                onPress={() => {
-                                  props.values.quantity < 5
-                                    ? props.setFieldValue(
-                                        'quantity',
-                                        props.values.quantity + 1,
-                                      )
-                                    : Toast.show('Limit Exceeded');
-                                }}>
-                                <Text style={styles.countButton}>+</Text>
-                              </TouchableOpacity>
+                        <View style={{flexDirection: 'row', left: 50}}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              props.increamentQuantity(item);
+                            }}>
+                            <Text style={styles.countButton}>+</Text>
+                          </TouchableOpacity>
 
-                              <Text style={styles.countButton}>
-                                {props.values.quantity}
-                              </Text>
+                          <Text style={styles.countButton}>
+                            {item.quantity}
+                          </Text>
 
-                              <TouchableOpacity
-                                onPress={() => {
-                                  props.values.quantity > 1
-                                    ? props.setFieldValue(
-                                        'quantity',
-                                        props.values.quantity - 1,
-                                      )
-                                    : Toast.show('Quantity must be 1');
-                                }}>
-                                <Text style={styles.countButton}>-</Text>
-                              </TouchableOpacity>
-                            </View>
-                          </View>
-                          <View style={styles.icon}>
-                            <TouchableOpacity
-                              onPress={() => {
-                                removeItem();
-                              }}>
-                              <FontAwesome
-                                name="times"
-                                size={15}
-                                color={'#444'}
-                                style={{padding: 5}}
-                              />
-                            </TouchableOpacity>
-                          </View>
+                          <TouchableOpacity
+                            onPress={() => {
+                              props.decrementQuantity(item);
+                            }}>
+                            <Text style={styles.countButton}>-</Text>
+                          </TouchableOpacity>
                         </View>
                       </View>
-                    )}
-                  </Formik>
+                      <View style={styles.icon}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            removeItem(item);
+                          }}>
+                          <FontAwesome
+                            name="times"
+                            size={15}
+                            color={'#444'}
+                            style={{padding: 5}}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
                 </View>
               );
             })}
@@ -158,10 +165,7 @@ function Cart(props) {
                 <Text style={{fontWeight: 'bold', fontSize: 18}}>
                   Sub Total:
                 </Text>
-                <Text style={{fontWeight: 'bold', fontSize: 18}}>
-                  Delivery Charges :
-                </Text>
-                <Text style={{fontWeight: 'bold', fontSize: 18}}>GST(10%)</Text>
+                <Text style={{fontWeight: 'bold', fontSize: 18}}>GST(5%)</Text>
                 <Text style={{fontWeight: 'bold', fontSize: 18}}>
                   ToTal Amount
                 </Text>
@@ -170,21 +174,32 @@ function Cart(props) {
                 <Text style={{fontSize: 18}}>
                   {'\u20B9'} {count}{' '}
                 </Text>
-                <Text style={{fontSize: 18}}>{'\u20B9'} 200</Text>
-                <Text style={{fontSize: 18}}>{'\u20B9'} 20</Text>
-                <Text style={{fontSize: 18}}> {'\u20B9'} 2220</Text>
+                <Text style={{fontSize: 18}}>
+                  {'\u20B9'} {gst}
+                </Text>
+                <Text style={{fontSize: 18}}>
+                  {' '}
+                  {'\u20B9'} {total}
+                </Text>
               </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
         <View style={styles.footer}>
           <View>
             <Text style={{fontSize: 22, paddingLeft: 30, fontWeight: 'bold'}}>
-              {'\u20B9'} 20000
+              {'\u20B9'} {total}
             </Text>
           </View>
           <View style={styles.button}>
-            <Button title="Place Order" />
+            <Button
+              title="Place Order"
+              onPress={() => {
+                navigation.navigate('OrderSummary', {
+                  total: total,
+                });
+              }}
+            />
           </View>
         </View>
       </View>
@@ -196,6 +211,15 @@ const mapStateToProps = (state) => {
   return {
     loading: state.cartReducer.loading,
     cartData: state.cartReducer.cartData,
+    userData: state.loginReducer.user,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    removeFromCart: (item) => dispatch(removeFromCart(item)),
+    deleteCart: (item, token) => dispatch(deleteCart(item, token)),
+    increamentQuantity: (item) => dispatch(increamentQuantity(item)),
+    decrementQuantity: (item) => dispatch(decrementQuantity(item)),
   };
 };
 
@@ -271,7 +295,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 30,
     borderRadius: 2,
-    marginLeft: 90,
+    marginLeft: 80,
   },
   footer: {
     flexDirection: 'row',
@@ -285,4 +309,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(Cart);
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

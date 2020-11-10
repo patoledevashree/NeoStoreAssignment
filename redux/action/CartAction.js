@@ -3,6 +3,10 @@ import {
   GET_CARTDATA_SUCCESS,
   GET_CARTDATA_FALIURE,
   ADD_TOCART,
+  REMOVE_FROM_CART,
+  EMPTY_CART,
+  INCREAMENT_QUANTITY,
+  DECREMENT_QUANTITY,
 } from './types';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
@@ -30,6 +34,33 @@ export const cartDataFaliure = (error) => {
 export const addCart = (data) => {
   return {
     type: ADD_TOCART,
+    data: data,
+  };
+};
+
+export const removeCart = (data) => {
+  return {
+    type: REMOVE_FROM_CART,
+    data: data,
+  };
+};
+
+export const emptyCart = () => {
+  return {
+    type: EMPTY_CART,
+  };
+};
+
+export const incerment = (data) => {
+  return {
+    type: INCREAMENT_QUANTITY,
+    data: data,
+  };
+};
+
+export const decrement = (data) => {
+  return {
+    type: DECREMENT_QUANTITY,
     data: data,
   };
 };
@@ -80,9 +111,49 @@ export const addToCart = (product, dispatch) => {
     product_id: product,
     product_cost: product.product_cost,
     quantity: 1,
-    total_ProductCost: product.product_,
+    total_productCost: parseInt(product.product_cost),
   };
-  console.log('data', data);
   dispatch(addCart(data));
   Toast.show('Item Added to cart');
+};
+
+export const removeFromCart = (item) => {
+  console.log('action', item);
+  return {
+    type: REMOVE_FROM_CART,
+    data: item,
+  };
+};
+
+export const deleteCart = (item, token) => {
+  return (dipatch) => {
+    console.log('item', item);
+    axios
+      .delete(
+        `http://180.149.241.208:3022/deleteCustomerCart/${item.product_id.product_id}`,
+        {
+          headers: {Authorization: `bearer ${token}`},
+        },
+      )
+      .then((response) => {
+        console.log('response', response);
+      })
+      .catch((error) => {
+        console.log('error', error.response);
+      });
+  };
+};
+
+export const increamentQuantity = (item) => {
+  return {
+    type: INCREAMENT_QUANTITY,
+    data: item,
+  };
+};
+
+export const decrementQuantity = (item) => {
+  return {
+    type: DECREMENT_QUANTITY,
+    data: item,
+  };
 };
