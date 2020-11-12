@@ -1,8 +1,10 @@
+import {storeData} from '../action/LoginAction';
 import {
   GET_CARTDATA_REQUEST,
   GET_CARTDATA_SUCCESS,
   GET_CARTDATA_FALIURE,
 } from '../action/types';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const initialState = {
   cartData: [],
@@ -29,6 +31,13 @@ const CartReducer = (state = initialState, action) => {
           cartItem.push(item);
         }
       });
+      _RestoreData = async () => {
+        await AsyncStorage.setItem(
+          'cartData',
+          JSON.stringify([...action.data, ...cartItem]),
+        );
+      };
+      _RestoreData();
       return {
         ...state,
         cartData: [...action.data, ...cartItem],
@@ -40,13 +49,20 @@ const CartReducer = (state = initialState, action) => {
     case 'GET_CARTDATA_FALIURE': {
       return {
         ...state,
-        cartData: {},
+        cartData: [],
         loading: false,
         error: action.data,
       };
     }
 
     case 'ADD_TOCART': {
+      _storeData = async () => {
+        await AsyncStorage.setItem(
+          'cartData',
+          JSON.stringify([...state.cartData, action.data]),
+        );
+      };
+      _storeData();
       return {
         ...state,
         cartData: [...state.cartData, action.data],
@@ -59,6 +75,10 @@ const CartReducer = (state = initialState, action) => {
           product.product_id.product_id !== action.data.product_id.product_id,
       );
       console.log('FilteredData', data);
+      _delstoreData = async () => {
+        await AsyncStorage.setItem('cartData', JSON.stringify(data));
+      };
+      _delstoreData();
       return {
         ...state,
         cartData: data,
@@ -109,6 +129,13 @@ const CartReducer = (state = initialState, action) => {
       return {
         ...state,
         cartData: arrary,
+      };
+    }
+
+    case 'RESTORE_CART': {
+      return {
+        ...state,
+        cartData: action.data,
       };
     }
 

@@ -26,6 +26,7 @@ import {restoreData} from '../redux/action/LoginAction';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import {getCartData} from '../redux/action/CartAction';
+import {restoreCart} from '../redux/action/CartAction';
 
 /**
  * @author Devashree Patole
@@ -55,6 +56,7 @@ function Dashboard(props) {
     props.getDashboard();
     props.getTopRatedProduct();
     restoteUserData();
+    restoreCartData();
   }, []);
 
   const restoteUserData = async () => {
@@ -63,8 +65,15 @@ function Dashboard(props) {
     if (user !== null) {
       props.restoreData(parseData);
       console.log('parsedata', parseData);
-      props.getCartData(parseData.data.token);
+      // props.getCartData(parseData.data.token);
     }
+  };
+
+  const restoreCartData = async () => {
+    const cart = await AsyncStorage.getItem('cartData');
+    const parseData = await JSON.parse(cart);
+    console.log('parseData', parseData);
+    props.restoreCart(parseData);
   };
 
   const handleChange = (val) => {
@@ -123,6 +132,7 @@ function Dashboard(props) {
                   onChangeText={(val) => {
                     handleChange(val);
                   }}
+                  value={query}
                 />
               </View>
             </View>
@@ -245,18 +255,18 @@ function Dashboard(props) {
                   <View>
                     {searchResult.length != 0 ? (
                       <View>
-                        {searchResult.map((item, index) => {
+                        {searchResult.map((item) => {
                           return (
-                            <ScrollView>
+                            <ScrollView key={item.product_id}>
                               <TouchableOpacity
                                 onPress={() => {
+                                  setQuery('');
                                   navigation.navigate('ProductDetail', {
                                     data: item.product_id,
                                     product_name: item.product_name,
                                   });
                                 }}>
                                 <View
-                                  key={index}
                                   style={{
                                     borderBottomWidth: 1,
                                     flexDirection: 'row',
@@ -331,6 +341,7 @@ const mapDispatchToProps = (dispatch) => {
     getTopRatedProduct: () => dispatch(getTopRatedProduct()),
     restoreData: (userData) => dispatch(restoreData(userData)),
     getCartData: (token) => dispatch(getCartData(token)),
+    restoreCart: (cart) => dispatch(restoreCart(cart)),
   };
 };
 

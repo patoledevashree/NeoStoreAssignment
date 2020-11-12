@@ -7,9 +7,11 @@ import {
   EMPTY_CART,
   INCREAMENT_QUANTITY,
   DECREMENT_QUANTITY,
+  RESTORE_CART,
 } from './types';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const cartDataRequest = () => {
   return {
@@ -74,11 +76,19 @@ export const getCartData = (token) => {
       })
       .then((response) => {
         console.log('response', response);
-        const cart = response.data.product_details;
+        let cart = [];
+        if (
+          response.data.message ===
+          'Your cart is empty. Please, first add products on your cart'
+        ) {
+          cart = [];
+        } else {
+          cart = response.data.product_details;
+        }
         dispatch(cartDataSuccess(cart));
       })
       .catch((error) => {
-        console.log('error', error.response);
+        console.log('error', error);
         dispatch(cartDataFaliure(error.response.data));
       });
   };
@@ -155,5 +165,43 @@ export const decrementQuantity = (item) => {
   return {
     type: DECREMENT_QUANTITY,
     data: item,
+  };
+};
+
+export const orderProduct = (cartItem, token) => {
+  return (dispatch) => {
+    console.log('cartItem', cartItem);
+    let cartCheckOut = [];
+    let i = 0;
+    for (i; i < cartItem.length; i++) {
+      cartCheckOut[i] = cartItem[i].product_id;
+      cartCheckOut[i].quantity = cartItem[i].quantity;
+      cartCheckOut[i].total = cartItem[i].total_productCost;
+    }
+    cartCheckOut[i] = {flag: 'checkout'};
+    console.log('cartCheckout', cartCheckOut);
+    axios
+      .post(
+        'http://180.149.241.208:3022/addProductToCartCheckout',
+        cartCheckOut,
+        {
+          headers: {Authorization: `bearer ${token}`},
+        },
+      )
+      .then((response) => {
+        console.log('response', response);
+        dispatch(emptyCart());
+      })
+      .catch((error) => {
+        console.log('error', error.response);
+      });
+  };
+};
+
+export const restoreCart = (cart) => {
+  console.log('cart1', cart);
+  return {
+    type: RESTORE_CART,
+    data: cart,
   };
 };

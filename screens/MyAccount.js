@@ -65,13 +65,13 @@ function MyAccount(props) {
           <View style={{marginLeft: 30, marginTop: 20, flexDirection: 'row'}}>
             <FontAwesome name="phone-alt" size={20} color={'black'} />
             <Text style={{fontSize: 18, marginLeft: 20}}>
-              {props.userData.data.customer_details.phone_no}
+              {props.userData?.data.customer_details.phone_no}
             </Text>
           </View>
           <View style={{marginLeft: 30, marginTop: 10, flexDirection: 'row'}}>
             <FontAwesome name="envelope" size={20} />
             <Text style={{fontSize: 18, marginLeft: 20}}>
-              {props.userData.data.customer_details.email}
+              {props.userData?.data.customer_details.email}
             </Text>
           </View>
         </View>

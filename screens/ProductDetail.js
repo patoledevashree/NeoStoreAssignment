@@ -81,6 +81,7 @@ function ProductDetail(props) {
             </View>
           </View>
           <View style={{marginLeft: 20}}>
+            {console.log('ProductDetail', productDetail)}
             <View>
               <Text
                 style={{
@@ -94,7 +95,7 @@ function ProductDetail(props) {
                 style={{
                   fontSize: 18,
                 }}>
-                {productDetail.category_id.category_name}
+                {productDetail.category_id?.category_name}
               </Text>
 
               <Text
@@ -180,7 +181,15 @@ function ProductDetail(props) {
             <View
               style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
               <View style={styles.button}>
-                <Button title="Shop Now" />
+                <Button
+                  title="Shop Now"
+                  onPress={() => {
+                    navigation.navigate('OrderSummary', {
+                      total: productDetail.product_cost,
+                      product: productDetail,
+                    });
+                  }}
+                />
               </View>
               <View style={styles.button}>
                 <Button

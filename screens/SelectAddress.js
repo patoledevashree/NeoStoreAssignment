@@ -4,6 +4,7 @@ import axios from 'axios';
 import RadioForm from 'react-native-simple-radio-button';
 import LottieView from 'lottie-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation} from '@react-navigation/native';
 
 export default function SelectAddress({route}) {
   useEffect(() => {
@@ -12,8 +13,9 @@ export default function SelectAddress({route}) {
   const token = route.params.token;
   console.log('token', token);
   const [addressList, setAddress] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [address, setAdd] = useState('');
+  const navigation = useNavigation();
 
   const getAddress = () => {
     axios
@@ -41,13 +43,37 @@ export default function SelectAddress({route}) {
     for (let i = 0; i < addressList?.data?.customer_address.length; i++) {
       radio_props.push({
         label: addressList.data.customer_address[i].address,
-        value: addressList.data.customer_address[i].address,
+        value: addressList.data.customer_address[i],
       });
     }
   }
 
-  const Address = (val) => {
-    setAdd(val);
+  const Address = (values) => {
+    setAdd(values);
+    axios
+      .put(
+        'http://180.149.241.208:3022/updateAddress',
+        {
+          address_id: values.address_id,
+          address: values.address,
+          pincode: values.pinCode,
+          city: values.city,
+          state: values.state,
+          country: values.country,
+          isDeliveryAddress: true,
+        },
+        {
+          headers: {Authorization: `bearer ${token}`},
+        },
+      )
+      .then((response) => {
+        console.log('response', response);
+        route.params.onSelect(values);
+        navigation.goBack();
+      })
+      .catch((error) => {
+        console.log('error', error.response);
+      });
   };
 
   if (loading) {
@@ -85,6 +111,7 @@ export default function SelectAddress({route}) {
     } else {
       return (
         <View>
+          {console.log('radio', radio_props)}
           <View style={{marginLeft: 20, marginTop: 30, marginRight: 30}}>
             <RadioForm
               radio_props={radio_props}
@@ -97,6 +124,7 @@ export default function SelectAddress({route}) {
               }}
               labelStyle={{fontSize: 18, paddingRight: 10}}
             />
+            {console.log('val', address)}
           </View>
         </View>
       );

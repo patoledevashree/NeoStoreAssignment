@@ -136,7 +136,11 @@ export default function UpdateAddress({route}) {
                           name="times"
                           size={20}
                           color={'#444'}
-                          style={{padding: 5}}
+                          style={{
+                            paddingLeft: 5,
+                            paddingTop: 2,
+                            paddingRight: 2,
+                          }}
                         />
                       </TouchableOpacity>
                     </View>
@@ -172,10 +176,12 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: 'absolute',
-    right: 5,
-    top: 6,
-    borderRadius: 60,
-    backgroundColor: 'red',
+    right: 15,
+    top: 10,
+    height: 25,
+    width: 55,
+    borderRadius: 50,
+    backgroundColor: '#e7e7e7',
     width: 20,
   },
 });

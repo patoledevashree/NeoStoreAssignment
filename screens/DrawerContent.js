@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Alert} from 'react-native';
+import {View, StyleSheet, Alert, Image} from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import {Avatar, Title, Drawer, Caption} from 'react-native-paper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
@@ -54,12 +54,15 @@ function DrawerContent({...props}) {
               }}>
               <View style={styles.userInfo}>
                 {props.userData.data.customer_details.profile_img ? (
-                  <Avatar.Image
+                  <Image
+                    style={{
+                      height: 100,
+                      width: 100,
+                      borderRadius: 50,
+                    }}
                     source={{
                       uri: `http://180.149.241.208:3022/${props.userData.data.customer_details.profile_img}`,
                     }}
-                    rounded
-                    size={100}
                   />
                 ) : (
                   <Avatar.Image
@@ -104,18 +107,6 @@ function DrawerContent({...props}) {
                 }}
                 onPress={() => {
                   props.navigation.navigate('Product');
-                }}
-              />
-            </Drawer.Section>
-            <Drawer.Section>
-              <DrawerItem
-                icon={({color, size}) => (
-                  <FontAwesome name="first-order" size={size} color={color} />
-                )}
-                label="Orders"
-                labelStyle={{
-                  fontSize: 18,
-                  fontWeight: 'bold',
                 }}
               />
             </Drawer.Section>

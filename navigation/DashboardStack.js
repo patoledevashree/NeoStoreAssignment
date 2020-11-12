@@ -12,6 +12,7 @@ import {connect} from 'react-redux';
 import CartIcon from '../screens/CartIcon';
 import OrderSummary from '../screens/OrderSummary';
 import SelectAddress from '../screens/SelectAddress';
+import ThankYou from '../screens/ThankYou';
 
 const Stack = createStackNavigator();
 
@@ -113,6 +114,20 @@ function DashboardStack({userData, cartData}) {
         component={SelectAddress}
         options={{
           title: 'Select Address',
+          headerStyle: {
+            backgroundColor: '#2874F0',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontSize: 25,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="ThankYou"
+        component={ThankYou}
+        options={{
+          title: 'Thank You For Order',
           headerStyle: {
             backgroundColor: '#2874F0',
           },

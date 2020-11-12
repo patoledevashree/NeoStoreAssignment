@@ -45,7 +45,10 @@ function Product(props) {
   const [page, setPage] = useState(1);
   const [displayProduct, setDisplay] = useState([]);
   const [productList, setProduct] = useState({});
-  const [selectedPrice, setSelectedPrice] = useState({});
+  const [selectedPrice, setSelectedPrice] = useState({
+    sortBy: '',
+    sortIn: '',
+  });
 
   const category = props.categoryList;
 
@@ -122,11 +125,14 @@ function Product(props) {
       color_name: '',
       color_code: '',
     });
+    console.log('selected', selectedPrice);
     axios
       .get('http://180.149.241.208:3022/commonProducts', {
         params: {
           category_id: categoryId,
           color_id: '',
+          sortBy: selectedPrice.sortBy,
+          sortIn: selectedPrice.sortIn,
         },
       })
       .then((response) => {
@@ -255,7 +261,7 @@ function Product(props) {
 
   const productByRating = () => {
     setLoading(true);
-    getProductsRating();
+    clearColorProducts();
   };
 
   if (isLoading) {
@@ -423,6 +429,10 @@ function Product(props) {
 
           <TouchableOpacity
             onPress={() => {
+              setSelectedPrice({
+                sortBy: 'product_rating',
+                sortIn: true,
+              });
               productByRating();
             }}>
             <View style={{paddingVertical: 10, paddingLeft: 50}}>
