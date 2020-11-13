@@ -1,16 +1,36 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {baseUrl} from '../shared/config';
 import {cardStyles} from '../shared/Styles/cardStyle';
+import axios from 'axios';
+import {connect} from 'react-redux';
 /**
  * @author Devashree Patole
  * @description This screen contains the oirdwr detail tob be displayed
  * @param {object} route this contain the order detail
  * @returns JSX of Order Detail Screen
  */
-export default function OrderDetail({route}) {
+function OrderDetail({route, userData}) {
   const orders = route.params.data;
   const totalCost = orders[0].total_cartCost;
+
+  // const download = () => {
+  //   let orderData = {};
+  //   orderData.product_details = orders;
+  //   orderData._id = orders[0].order_id;
+  //   console.log('orders', orderData);
+  //   axios
+  //     .post(`${baseUrl}/getInvoiceOfOrder`, orderData, {
+  //       headers: {Authorization: `bearer ${userData.data.token}`},
+  //     })
+  //     .then((response) => {
+  //       console.log('response', response);
+  //     })
+  //     .catch((error) => {
+  //       console.log('error', error);
+  //     });
+  // };
   return (
     <View style={styles.container}>
       <View style={{marginBottom: 50}}>
@@ -49,6 +69,30 @@ export default function OrderDetail({route}) {
               </View>
             );
           })}
+          <TouchableOpacity
+            onPress={() => {
+              download();
+            }}>
+            {/* <View
+              style={{
+                width: 300,
+                height: 50,
+                backgroundColor: '#2874F0',
+                borderRadius: 8,
+                marginBottom: 20,
+                marginLeft: 50,
+              }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: 'white',
+                  fontSize: 18,
+                  paddingTop: 10,
+                }}>
+                Download Invoice As Pdf
+              </Text>
+            </View> */}
+          </TouchableOpacity>
         </ScrollView>
       </View>
       <View style={styles.footer}>
@@ -61,6 +105,12 @@ export default function OrderDetail({route}) {
     </View>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    userData: state.loginReducer.user,
+  };
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -89,3 +139,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 62,
   },
 });
+
+export default connect(mapStateToProps)(OrderDetail);
