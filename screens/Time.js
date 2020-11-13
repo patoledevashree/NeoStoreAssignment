@@ -2,6 +2,12 @@ import React from 'react';
 import {View, Text} from 'react-native';
 import moment from 'moment';
 
+/**
+ * @author Devashtree Patole
+ * @description This screen is to format the date
+ * @param {object} time this object contains the date and time which is to be formated
+ * @returns Formated date
+ */
 export default function Time({time}) {
   const date = moment(time).format('MMMM D, YYYY');
   return (

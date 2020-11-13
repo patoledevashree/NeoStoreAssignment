@@ -4,6 +4,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {connect} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 
+/**
+ * @author Devashree Patole
+ * @description This is to display the cart Icon on the header of dashboard and to display the cart count
+ * @param {object} props this contains the cartData from reducer
+ * @returns JSX of Icon
+ */
 function CartIcon(props) {
   const navigation = useNavigation();
   return (

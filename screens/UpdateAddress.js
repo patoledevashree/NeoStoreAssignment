@@ -13,11 +13,13 @@ import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import LottieView from 'lottie-react-native';
 import {useFocusEffect} from '@react-navigation/native';
+import {baseUrl} from '../shared/config';
 
 /**
  * @author Devashree Patole
  * @description This screen is to display list of address provided by user and also
  *              the user can edit the address and delete it
+ * @param {object} route This object contains the token of loggedIn user
  * @returns JSX of Update address sctreen
  */
 export default function UpdateAddress({route}) {
@@ -35,7 +37,7 @@ export default function UpdateAddress({route}) {
 
   const getAddressList = () => {
     axios
-      .get('http://180.149.241.208:3022/getCustAddress', {
+      .get(`${baseUrl}/getCustAddress`, {
         headers: {Authorization: `bearer ${route.params.token}`},
       })
       .then((response) => {
@@ -56,7 +58,7 @@ export default function UpdateAddress({route}) {
 
   const removeAddress = (id) => {
     axios
-      .delete(`http://180.149.241.208:3022/deladdress/${id}`, {
+      .delete(`${baseUrl}/deladdress/${id}`, {
         headers: {Authorization: `bearer ${route.params.token}`},
       })
       .then((response) => {

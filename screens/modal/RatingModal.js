@@ -1,16 +1,10 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  Button,
-} from 'react-native';
+import {View, Text, Modal, StyleSheet, Button} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {AirbnbRating} from 'react-native-ratings';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
+import {baseUrl} from '../../shared/config';
 
 /**
  * @author Devashree Patole
@@ -21,14 +15,11 @@ import Toast from 'react-native-simple-toast';
  */
 export default function RatingModal({visible, closeModal, token, productId}) {
   const [rating, setRating] = useState('');
-  console.log('token', token);
-  console.log('productId', productId);
-  console.log('rating', rating);
 
   const rateProduct = () => {
     axios
       .put(
-        'http://180.149.241.208:3022/updateProductRatingByCustomer',
+        `${baseUrl}/updateProductRatingByCustomer`,
         {
           product_id: productId,
           product_rating: rating,
@@ -44,7 +35,7 @@ export default function RatingModal({visible, closeModal, token, productId}) {
         Toast.show(response.data.message);
       })
       .catch((error) => {
-        console.log(error.response);
+        // console.log(error.response);
         Toast.show(error.response.data.message);
       });
   };
@@ -81,7 +72,6 @@ export default function RatingModal({visible, closeModal, token, productId}) {
                   reviews={['Bad', 'Ok', 'Good', 'Very Good', 'Amazing']}
                   showRating={true}
                   onFinishRating={(rate) => {
-                    console.log(rate);
                     setRating(rate);
                   }}
                   defaultRating={0}

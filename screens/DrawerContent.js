@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import {SignOut} from '../redux/action/SignOutAction';
 import Toast from 'react-native-simple-toast';
 import {emptyCart} from '../redux/action/CartAction';
+import {baseUrl} from '../shared/config';
 
 /**
  * @author Devashree Patole
@@ -15,12 +16,11 @@ import {emptyCart} from '../redux/action/CartAction';
  * @returns JSX of custom drawer
  */
 function DrawerContent({...props}) {
-  const [loggedin, setlogin] = useState(true);
-
   const showTost = () => {
     props.SignOut(props.cartData, props.userData.data.token);
     props.emptyCart();
     props.navigation.closeDrawer();
+    props.navigation.navigate('Dashboard');
     Toast.show('You Successfully Logged Out', Toast.LONG);
   };
   const logOut = () => {
@@ -61,7 +61,7 @@ function DrawerContent({...props}) {
                       borderRadius: 50,
                     }}
                     source={{
-                      uri: `http://180.149.241.208:3022/${props.userData.data.customer_details.profile_img}`,
+                      uri: `${baseUrl}/${props.userData.data.customer_details.profile_img}`,
                     }}
                   />
                 ) : (

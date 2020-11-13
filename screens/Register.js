@@ -17,6 +17,8 @@ import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import LottieView from 'lottie-react-native';
+import {baseUrl} from '../shared/config';
+import Somethingwrong from './Somethingwrong';
 
 const validationSchema = yup.object({
   FirstName: yup.string().min(4).required(),
@@ -53,7 +55,7 @@ export default function Register() {
   const [crf_eyeStyle, setCrfmIcon] = useState('eye-slash');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-
+  let error = '';
   const handlePwdClick = () => {
     setPassword(!securePwd);
     if (pwd_eyeStyle === 'eye-slash') {
@@ -70,6 +72,9 @@ export default function Register() {
       setCrfmIcon('eye-slash');
     }
   };
+  if (error) {
+    return <Somethingwrong />;
+  }
 
   if (loading) {
     return (
@@ -105,7 +110,7 @@ export default function Register() {
                 onSubmit={(values, action) => {
                   setLoading(true);
                   axios
-                    .post('http://180.149.241.208:3022/register', {
+                    .post(`${baseUrl}/register`, {
                       first_name: values.FirstName,
                       last_name: values.LastName,
                       email: values.Email,
@@ -115,16 +120,20 @@ export default function Register() {
                       gender: values.Gender,
                     })
                     .then((response) => {
-                      console.log('response', response);
+                      // console.log('response', response);
                       Toast.show('Registered Successfully');
                       navigation.navigate('Login');
                       action.resetForm({});
                       setLoading(false);
                     })
                     .catch((err) => {
-                      console.log(err);
+                      // console.log(err.response);
                       setLoading(false);
-                      Toast.show(err.response.data.message, Toast.LONG);
+                      if (err.response?.data?.message === undefined) {
+                        error = err.response.data;
+                      } else {
+                        Toast.show(err.response.data.message, Toast.LONG);
+                      }
                     });
                 }}>
                 {(props) => (

@@ -11,7 +11,7 @@ import {
 } from './types';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
-import AsyncStorage from '@react-native-community/async-storage';
+import {baseUrl} from '../../shared/config';
 
 export const cartDataRequest = () => {
   return {
@@ -71,11 +71,10 @@ export const getCartData = (token) => {
   return (dispatch) => {
     dispatch(cartDataRequest());
     axios
-      .get('http://180.149.241.208:3022/getCartData', {
+      .get(`${baseUrl}/getCartData`, {
         headers: {Authorization: `bearer ${token}`},
       })
       .then((response) => {
-        console.log('response', response);
         let cart = [];
         if (
           response.data.message ===
@@ -88,35 +87,31 @@ export const getCartData = (token) => {
         dispatch(cartDataSuccess(cart));
       })
       .catch((error) => {
-        console.log('error', error);
-        dispatch(cartDataFaliure(error.response.data));
+        // console.log('error', error);
+        if (error.response?.data?.message === undefined) {
+          dispatch(cartDataFaliure(error.response.data));
+        }
       });
   };
 };
 
 export const checkCart = (product, cartItem) => {
   return (dispatch) => {
-    console.log('cartItem', cartItem);
     let index = -1;
     for (let i = 0; i < cartItem.length; i++) {
       if (product.product_id === cartItem[i].product_id.product_id) {
-        console.log('matched');
         Toast.show('Already Added to Cart');
         index = 1;
         break;
       }
     }
-    console.log('index', index);
     if (index === -1) {
-      console.log('add product');
-      console.log('Product', product);
       addToCart(product, dispatch);
     }
   };
 };
 
 export const addToCart = (product, dispatch) => {
-  console.log('productAction', product);
   const data = {
     product_id: product,
     product_cost: product.product_cost,
@@ -128,7 +123,6 @@ export const addToCart = (product, dispatch) => {
 };
 
 export const removeFromCart = (item) => {
-  console.log('action', item);
   return {
     type: REMOVE_FROM_CART,
     data: item,
@@ -137,19 +131,15 @@ export const removeFromCart = (item) => {
 
 export const deleteCart = (item, token) => {
   return (dipatch) => {
-    console.log('item', item);
     axios
-      .delete(
-        `http://180.149.241.208:3022/deleteCustomerCart/${item.product_id.product_id}`,
-        {
-          headers: {Authorization: `bearer ${token}`},
-        },
-      )
+      .delete(`${baseUrl}/deleteCustomerCart/${item.product_id.product_id}`, {
+        headers: {Authorization: `bearer ${token}`},
+      })
       .then((response) => {
-        console.log('response', response);
+        // console.log('response', response);
       })
       .catch((error) => {
-        console.log('error', error.response);
+        // console.log('error', error.response);
       });
   };
 };
@@ -170,7 +160,6 @@ export const decrementQuantity = (item) => {
 
 export const orderProduct = (cartItem, token) => {
   return (dispatch) => {
-    console.log('cartItem', cartItem);
     let cartCheckOut = [];
     let i = 0;
     for (i; i < cartItem.length; i++) {
@@ -179,27 +168,20 @@ export const orderProduct = (cartItem, token) => {
       cartCheckOut[i].total = cartItem[i].total_productCost;
     }
     cartCheckOut[i] = {flag: 'checkout'};
-    console.log('cartCheckout', cartCheckOut);
     axios
-      .post(
-        'http://180.149.241.208:3022/addProductToCartCheckout',
-        cartCheckOut,
-        {
-          headers: {Authorization: `bearer ${token}`},
-        },
-      )
+      .post(`${baseUrl}/addProductToCartCheckout`, cartCheckOut, {
+        headers: {Authorization: `bearer ${token}`},
+      })
       .then((response) => {
-        console.log('response', response);
         dispatch(emptyCart());
       })
       .catch((error) => {
-        console.log('error', error.response);
+        // console.log('error', error.response);
       });
   };
 };
 
 export const restoreCart = (cart) => {
-  console.log('cart1', cart);
   return {
     type: RESTORE_CART,
     data: cart,

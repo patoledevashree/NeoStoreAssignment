@@ -27,6 +27,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import {getCartData} from '../redux/action/CartAction';
 import {restoreCart} from '../redux/action/CartAction';
+import {baseUrl} from '../shared/config';
+import Somethingwrong from './Somethingwrong';
 
 /**
  * @author Devashree Patole
@@ -64,7 +66,6 @@ function Dashboard(props) {
     const parseData = await JSON.parse(user);
     if (user !== null) {
       props.restoreData(parseData);
-      console.log('parsedata', parseData);
       // props.getCartData(parseData.data.token);
     }
   };
@@ -72,7 +73,6 @@ function Dashboard(props) {
   const restoreCartData = async () => {
     const cart = await AsyncStorage.getItem('cartData');
     const parseData = await JSON.parse(cart);
-    console.log('parseData', parseData);
     props.restoreCart(parseData);
   };
 
@@ -83,7 +83,7 @@ function Dashboard(props) {
 
   const handleSearch = () => {
     axios
-      .get(`http://180.149.241.208:3022/getProductBySearchText/${query}`)
+      .get(`${baseUrl}/getProductBySearchText/${query}`)
       .then((response) => {
         const data = response.data.product_details;
         if (data === 'No details are available') {
@@ -94,11 +94,15 @@ function Dashboard(props) {
         setLoading(false);
       })
       .catch((error) => {
-        console.log('Error search', error, error.data);
+        // console.log('Error search', error, error.data);
       });
   };
 
   const debounceSearch = debounce(handleSearch, 1000);
+
+  if (props.error) {
+    return <Somethingwrong />;
+  }
 
   if (props.isLoading) {
     return (
@@ -154,7 +158,7 @@ function Dashboard(props) {
                               }}>
                               <Image
                                 source={{
-                                  uri: `http://180.149.241.208:3022/${item.product_image}`,
+                                  uri: `${baseUrl}/${item.product_image}`,
                                 }}
                                 resizeMode="cover"
                                 style={styles.sliderImage}
@@ -209,7 +213,7 @@ function Dashboard(props) {
                             <View style={styles.cardImgWrapper}>
                               <ImageBackground
                                 source={{
-                                  uri: `http://180.149.241.208:3022/${item.DashboardProducts[0].product_image}`,
+                                  uri: `${baseUrl}/${item.DashboardProducts[0].product_image}`,
                                 }}
                                 resizeMode="cover"
                                 style={styles.cardImg}>
@@ -332,6 +336,7 @@ const mapStateToProps = (state) => {
     topRatedProduct: state.dashboardReducer.topRatedProduct,
     isLoading: state.dashboardReducer.isLoading,
     userData: state.loginReducer.user,
+    error: state.dashboardReducer.error,
   };
 };
 

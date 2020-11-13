@@ -14,6 +14,8 @@ import * as yup from 'yup';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import {useNavigation} from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
+import {baseUrl} from '../shared/config';
 
 /**
  * @author Devashree Patole
@@ -48,6 +50,7 @@ export default function ChangePassword({route}) {
   const [pwd_eyeStyle, setPwdIcon] = useState('eye-slash');
   const [crf_eyeStyle, setCrfmIcon] = useState('eye-slash');
   const [old_eyeStyle, setOldIcon] = useState('eye-slash');
+  const [loading, setLoading] = useState(false);
 
   const handlePwdClick = () => {
     setPassword(!securePwd);
@@ -76,134 +79,144 @@ export default function ChangePassword({route}) {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <ScrollView>
-        <Formik
-          initialValues={{
-            oldPwd: '',
-            newPwd: '',
-            crfmPwd: '',
-          }}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            axios
-              .post(
-                'http://180.149.241.208:3022/changePassword',
-                {
-                  oldPass: values.oldPwd,
-                  newPass: values.newPwd,
-                  confirmPass: values.crfmPwd,
-                },
-                {headers: {Authorization: `bearer ${route.params.token}`}},
-              )
-              .then((response) => {
-                Toast.show(response.data.message);
-                navigation.goBack();
-              })
-              .catch((error) => {
-                Toast.show(error.response.data.message);
-              });
-          }}>
-          {(props) => (
-            <View style={{marginTop: 30}}>
-              <View>
-                <FontAwesome
-                  name="key"
-                  size={25}
-                  color={'#777'}
-                  style={styles.icon}
-                />
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={secureOldPwd}
-                  placeholder="Current Password"
-                  onChangeText={props.handleChange('oldPwd')}
-                  value={props.values.oldPwd}
-                  onBlur={props.handleBlur('oldPwd')}
-                />
-                <FontAwesome
-                  style={{position: 'absolute', top: 40, right: 20}}
-                  name={old_eyeStyle}
-                  size={20}
-                  onPress={handleOldClick}
-                />
-                {props.touched.oldPwd && props.errors.oldPwd && (
-                  <Text style={styles.error}>
-                    {props.touched.oldPwd && props.errors.oldPwd}
-                  </Text>
-                )}
-              </View>
+  if (loading) {
+    return (
+      <LottieView
+        source={require('../assests/images/4383-circle-loader.json')}
+        autoPlay
+        loop
+      />
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <ScrollView>
+          <Formik
+            initialValues={{
+              oldPwd: '',
+              newPwd: '',
+              crfmPwd: '',
+            }}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              axios
+                .post(
+                  `${baseUrl}/changePassword`,
+                  {
+                    oldPass: values.oldPwd,
+                    newPass: values.newPwd,
+                    confirmPass: values.crfmPwd,
+                  },
+                  {headers: {Authorization: `bearer ${route.params.token}`}},
+                )
+                .then((response) => {
+                  Toast.show(response.data.message);
+                  navigation.goBack();
+                })
+                .catch((error) => {
+                  Toast.show(error.response.data.message);
+                });
+            }}>
+            {(props) => (
+              <View style={{marginTop: 30}}>
+                <View>
+                  <FontAwesome
+                    name="key"
+                    size={25}
+                    color={'#777'}
+                    style={styles.icon}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={secureOldPwd}
+                    placeholder="Current Password"
+                    onChangeText={props.handleChange('oldPwd')}
+                    value={props.values.oldPwd}
+                    onBlur={props.handleBlur('oldPwd')}
+                  />
+                  <FontAwesome
+                    style={{position: 'absolute', top: 40, right: 20}}
+                    name={old_eyeStyle}
+                    size={20}
+                    onPress={handleOldClick}
+                  />
+                  {props.touched.oldPwd && props.errors.oldPwd && (
+                    <Text style={styles.error}>
+                      {props.touched.oldPwd && props.errors.oldPwd}
+                    </Text>
+                  )}
+                </View>
 
-              <View>
-                <FontAwesome
-                  name="key"
-                  size={25}
-                  color={'#777'}
-                  style={styles.icon}
-                />
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={securePwd}
-                  placeholder="New Password"
-                  onChangeText={props.handleChange('newPwd')}
-                  value={props.values.newPwd}
-                  onBlur={props.handleBlur('newPwd')}
-                />
-                <FontAwesome
-                  style={{position: 'absolute', top: 40, right: 20}}
-                  name={pwd_eyeStyle}
-                  size={20}
-                  onPress={handlePwdClick}
-                />
-                {props.touched.newPwd && props.errors.newPwd && (
-                  <Text style={styles.error}>
-                    {props.touched.newPwd && props.errors.newPwd}
-                  </Text>
-                )}
-              </View>
+                <View>
+                  <FontAwesome
+                    name="key"
+                    size={25}
+                    color={'#777'}
+                    style={styles.icon}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={securePwd}
+                    placeholder="New Password"
+                    onChangeText={props.handleChange('newPwd')}
+                    value={props.values.newPwd}
+                    onBlur={props.handleBlur('newPwd')}
+                  />
+                  <FontAwesome
+                    style={{position: 'absolute', top: 40, right: 20}}
+                    name={pwd_eyeStyle}
+                    size={20}
+                    onPress={handlePwdClick}
+                  />
+                  {props.touched.newPwd && props.errors.newPwd && (
+                    <Text style={styles.error}>
+                      {props.touched.newPwd && props.errors.newPwd}
+                    </Text>
+                  )}
+                </View>
 
-              <View>
-                <FontAwesome
-                  name="key"
-                  size={25}
-                  color={'#777'}
-                  style={styles.icon}
-                />
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={secureCrfm}
-                  placeholder="Confirm Password"
-                  onChangeText={props.handleChange('crfmPwd')}
-                  value={props.values.crfmPwd}
-                  onBlur={props.handleBlur('crfmPwd')}
-                />
-                <FontAwesome
-                  style={{position: 'absolute', top: 40, right: 20}}
-                  name={crf_eyeStyle}
-                  size={20}
-                  onPress={handleClick}
-                />
-                {props.touched.crfmPwd && props.errors.crfmPwd && (
-                  <Text style={styles.error}>
-                    {props.touched.crfmPwd && props.errors.crfmPwd}
-                  </Text>
-                )}
-              </View>
+                <View>
+                  <FontAwesome
+                    name="key"
+                    size={25}
+                    color={'#777'}
+                    style={styles.icon}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={secureCrfm}
+                    placeholder="Confirm Password"
+                    onChangeText={props.handleChange('crfmPwd')}
+                    value={props.values.crfmPwd}
+                    onBlur={props.handleBlur('crfmPwd')}
+                  />
+                  <FontAwesome
+                    style={{position: 'absolute', top: 40, right: 20}}
+                    name={crf_eyeStyle}
+                    size={20}
+                    onPress={handleClick}
+                  />
+                  {props.touched.crfmPwd && props.errors.crfmPwd && (
+                    <Text style={styles.error}>
+                      {props.touched.crfmPwd && props.errors.crfmPwd}
+                    </Text>
+                  )}
+                </View>
 
-              <View style={{borderRadius: 10, marginTop: 20, width: 300}}>
-                <Button
-                  title="Change Password"
-                  color={'#2874F0'}
-                  onPress={props.handleSubmit}
-                />
+                <View style={{borderRadius: 10, marginTop: 20, width: 300}}>
+                  <Button
+                    title="Change Password"
+                    color={'#2874F0'}
+                    onPress={props.handleSubmit}
+                  />
+                </View>
               </View>
-            </View>
-          )}
-        </Formik>
-      </ScrollView>
-    </View>
-  );
+            )}
+          </Formik>
+        </ScrollView>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

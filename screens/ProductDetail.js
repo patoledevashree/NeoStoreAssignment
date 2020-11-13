@@ -18,6 +18,8 @@ import {getProductDetail} from '../redux/action/ProductAction';
 import LottieView from 'lottie-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {checkCart} from '../redux/action/CartAction';
+import Share from 'react-native-share';
+import {baseUrl} from '../shared/config';
 
 /**
  * @author Devashree Patole
@@ -34,18 +36,29 @@ function ProductDetail(props) {
     props.getProductDetail(product_id);
   }, []);
 
-  console.log('data', props.userData);
   const productDetail = props.product;
   const [rate, setrating] = useState(false);
   const navigation = useNavigation();
   const [cartItem, setItem] = useState([]);
-
+  console.log('ProductDetail', productDetail);
   const addCart = () => {
     props.checkCart(productDetail, props.cartData);
   };
 
   const closeModal = () => {
     setrating(false);
+  };
+
+  const shareProduct = async () => {
+    const shareOptions = {
+      message: `${baseUrl}/getProductByProdId/${product_id}`,
+    };
+
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+    } catch (error) {
+      // console.log('error', error);
+    }
   };
   if (props.loading) {
     return (
@@ -68,7 +81,7 @@ function ProductDetail(props) {
                       <View key={index} style={styles.slide}>
                         <Image
                           source={{
-                            uri: `http://180.149.241.208:3022/${item}`,
+                            uri: `${baseUrl}/${item}`,
                           }}
                           resizeMode="cover"
                           style={styles.sliderImage}
@@ -81,7 +94,6 @@ function ProductDetail(props) {
             </View>
           </View>
           <View style={{marginLeft: 20}}>
-            {console.log('ProductDetail', productDetail)}
             <View>
               <Text
                 style={{
@@ -133,7 +145,25 @@ function ProductDetail(props) {
                 Product By: {productDetail.product_producer}
               </Text>
             </View>
-
+            <FontAwesome
+              name="share-alt"
+              size={30}
+              style={{
+                position: 'absolute',
+                right: 30,
+                top: 35,
+                height: 50,
+                width: 50,
+                borderWidth: 1,
+                paddingLeft: 8,
+                paddingTop: 10,
+                borderRadius: 50,
+              }}
+              color={'#777'}
+              onPress={() => {
+                shareProduct();
+              }}
+            />
             <View>
               <Text
                 style={{
@@ -166,7 +196,11 @@ function ProductDetail(props) {
           <View style={styles.icon}>
             <TouchableOpacity
               onPress={() => {
-                addCart();
+                if (productDetail.product_stock !== 0) {
+                  addCart();
+                } else {
+                  Toast.show('Product Out Of Stock');
+                }
               }}>
               <FontAwesome
                 name="shopping-cart"
@@ -185,7 +219,7 @@ function ProductDetail(props) {
                   title="Shop Now"
                   onPress={() => {
                     navigation.navigate('OrderSummary', {
-                      total: productDetail.product_cost,
+                      total: '',
                       product: productDetail,
                     });
                   }}

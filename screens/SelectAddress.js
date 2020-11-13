@@ -1,17 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, YellowBox} from 'react-native';
 import axios from 'axios';
 import RadioForm from 'react-native-simple-radio-button';
 import LottieView from 'lottie-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
+import {baseUrl} from '../shared/config';
 
+/**
+ * @author Devashree Patole
+ * @description This screen is to select the address for delivery of the products
+ * @param {object} route This object contains the token of loggedIn user
+ * @returns JSX of select Address Screen
+ */
 export default function SelectAddress({route}) {
   useEffect(() => {
     getAddress();
   }, []);
   const token = route.params.token;
-  console.log('token', token);
   const [addressList, setAddress] = useState({});
   const [loading, setLoading] = useState(true);
   const [address, setAdd] = useState('');
@@ -19,7 +25,7 @@ export default function SelectAddress({route}) {
 
   const getAddress = () => {
     axios
-      .get('http://180.149.241.208:3022/getCustAddress', {
+      .get(`${baseUrl}/getCustAddress`, {
         headers: {Authorization: `bearer ${token}`},
       })
       .then((response) => {
@@ -52,7 +58,7 @@ export default function SelectAddress({route}) {
     setAdd(values);
     axios
       .put(
-        'http://180.149.241.208:3022/updateAddress',
+        `${baseUrl}/updateAddress`,
         {
           address_id: values.address_id,
           address: values.address,
@@ -67,15 +73,17 @@ export default function SelectAddress({route}) {
         },
       )
       .then((response) => {
-        console.log('response', response);
+        // console.log('response', response);
         route.params.onSelect(values);
         navigation.goBack();
       })
       .catch((error) => {
-        console.log('error', error.response);
+        // console.log('error', error.response);
       });
   };
-
+  YellowBox.ignoreWarnings([
+    'Non-serializable values were found in the navigation state',
+  ]);
   if (loading) {
     return (
       <LottieView
@@ -85,7 +93,6 @@ export default function SelectAddress({route}) {
       />
     );
   } else {
-    console.log('addresslist', addressList);
     if (addressList.length === 0) {
       return (
         <View style={{marginVertical: 20}}>
@@ -111,7 +118,6 @@ export default function SelectAddress({route}) {
     } else {
       return (
         <View>
-          {console.log('radio', radio_props)}
           <View style={{marginLeft: 20, marginTop: 30, marginRight: 30}}>
             <RadioForm
               radio_props={radio_props}
@@ -124,7 +130,6 @@ export default function SelectAddress({route}) {
               }}
               labelStyle={{fontSize: 18, paddingRight: 10}}
             />
-            {console.log('val', address)}
           </View>
         </View>
       );

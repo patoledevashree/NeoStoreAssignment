@@ -1,11 +1,15 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-
+import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
+import {baseUrl} from '../shared/config';
+/**
+ * @author Devashree Patole
+ * @description This screen contains the oirdwr detail tob be displayed
+ * @param {object} route this contain the order detail
+ * @returns JSX of Order Detail Screen
+ */
 export default function OrderDetail({route}) {
   const orders = route.params.data;
   const totalCost = orders[0].total_cartCost;
-  console.log(orders);
   return (
     <View style={styles.container}>
       <View style={{marginBottom: 50}}>
@@ -17,7 +21,7 @@ export default function OrderDetail({route}) {
                   <View style={styles.cardImgWrapper}>
                     <Image
                       source={{
-                        uri: `http://180.149.241.208:3022/${item.product_details[0].product_image}`,
+                        uri: `${baseUrl}/${item.product_details[0].product_image}`,
                       }}
                       style={styles.cardImg}
                     />

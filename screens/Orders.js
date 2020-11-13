@@ -5,7 +5,14 @@ import LottieView from 'lottie-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Time from './Time';
+import {baseUrl} from '../shared/config';
 
+/**
+ * @author Devashree Patole
+ * @description This screen contains the list of orders the user have made
+ * @param {object} route  This object contains the token of the loggedin user
+ * @returns JSX of Orders list
+ */
 export default function Orders({route}) {
   useEffect(() => {
     getOrders();
@@ -15,16 +22,16 @@ export default function Orders({route}) {
   const navigation = useNavigation();
   const getOrders = () => {
     axios
-      .get('http://180.149.241.208:3022/getOrderDetails', {
+      .get(`${baseUrl}/getOrderDetails`, {
         headers: {Authorization: `bearer ${route.params.token}`},
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         setOrder(response.data.product_details);
         setLoading(false);
       })
       .catch((error) => {
-        console.log('error', error.response);
+        // console.log('error', error.response);
         setLoading(false);
       });
   };

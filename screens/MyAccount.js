@@ -6,6 +6,8 @@ import {useNavigation} from '@react-navigation/native';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import LottieView from 'lottie-react-native';
+import {baseUrl} from '../shared/config';
+import Somethingwrong from './Somethingwrong';
 
 /**
  * @author Devashree Patole
@@ -18,8 +20,10 @@ import LottieView from 'lottie-react-native';
 function MyAccount(props) {
   const navigation = useNavigation();
   const [loading, setloading] = useState(false);
-  console.log(props.userData);
 
+  if (props.error) {
+    return <Somethingwrong />;
+  }
   if (loading) {
     return (
       <LottieView
@@ -32,7 +36,7 @@ function MyAccount(props) {
     return (
       <View>
         <View style={{flexDirection: 'row'}}>
-          {props.userData.data.customer_details.profile_img ? (
+          {props.userData?.data?.customer_details.profile_img ? (
             <Image
               style={{
                 height: 100,
@@ -42,7 +46,7 @@ function MyAccount(props) {
                 marginLeft: 10,
               }}
               source={{
-                uri: `http://180.149.241.208:3022/${props.userData?.data?.customer_details.profile_img}`,
+                uri: `${baseUrl}/${props.userData?.data?.customer_details.profile_img}`,
               }}
             />
           ) : (
@@ -55,8 +59,8 @@ function MyAccount(props) {
           )}
           <View style={{marginLeft: 30, marginTop: 60}}>
             <Title style={{fontSize: 22}}>
-              {props.userData.data.customer_details.first_name}{' '}
-              {props.userData.data.customer_details.last_name}
+              {props.userData?.data?.customer_details.first_name}{' '}
+              {props.userData?.data?.customer_details.last_name}
             </Title>
           </View>
         </View>
@@ -65,13 +69,13 @@ function MyAccount(props) {
           <View style={{marginLeft: 30, marginTop: 20, flexDirection: 'row'}}>
             <FontAwesome name="phone-alt" size={20} color={'black'} />
             <Text style={{fontSize: 18, marginLeft: 20}}>
-              {props.userData?.data.customer_details.phone_no}
+              {props.userData?.data?.customer_details.phone_no}
             </Text>
           </View>
           <View style={{marginLeft: 30, marginTop: 10, flexDirection: 'row'}}>
             <FontAwesome name="envelope" size={20} />
             <Text style={{fontSize: 18, marginLeft: 20}}>
-              {props.userData?.data.customer_details.email}
+              {props.userData?.data?.customer_details.email}
             </Text>
           </View>
         </View>
@@ -94,8 +98,8 @@ function MyAccount(props) {
             <View style={styles.content}>
               <Text style={styles.contentText}>
                 {' '}
-                {props.userData.data.orders_shipped +
-                  props.userData.data.orders_onTheWay}
+                {props.userData?.data?.orders_shipped +
+                  props.userData?.data?.orders_onTheWay}
               </Text>
               <Text style={styles.contentText}>Orders</Text>
             </View>
@@ -199,6 +203,7 @@ function MyAccount(props) {
 const mapStateToProps = (state) => {
   return {
     userData: state.loginReducer.user,
+    error: state.dashboardReducer.error,
   };
 };
 

@@ -20,11 +20,11 @@ const Stack = createStackNavigator();
  * @author Devashree Patole
  * @description This file provides the stack navigation of the
  *              Dashboard and Cart screens.
+ * @params {object} userData  this object constins the user information
  * @returns JSX of the stack navigation
  */
 function DashboardStack({userData, cartData}) {
   const navigation = useNavigation();
-  console.log('userdata', userData);
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -127,14 +127,7 @@ function DashboardStack({userData, cartData}) {
         name="ThankYou"
         component={ThankYou}
         options={{
-          title: 'Thank You For Order',
-          headerStyle: {
-            backgroundColor: '#2874F0',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontSize: 25,
-          },
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

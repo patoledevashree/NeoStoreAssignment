@@ -74,7 +74,7 @@ const CartReducer = (state = initialState, action) => {
         (product) =>
           product.product_id.product_id !== action.data.product_id.product_id,
       );
-      console.log('FilteredData', data);
+
       _delstoreData = async () => {
         await AsyncStorage.setItem('cartData', JSON.stringify(data));
       };

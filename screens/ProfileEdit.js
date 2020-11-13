@@ -25,6 +25,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
+import {baseUrl} from '../shared/config';
+import Somethingwrong from './Somethingwrong';
 
 /**
  * @author Devashree Patole
@@ -51,7 +53,6 @@ function ProfileEdit(props) {
   const [photo, setPhoto] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  console.log(props.userData);
   const [show, setShow] = useState(false);
   const [date, setDate] = useState(new Date(1598051730000));
   const user = props.userData.data.customer_details;
@@ -75,6 +76,10 @@ function ProfileEdit(props) {
     setShow(true);
   };
 
+  if (props.error) {
+    return <Somethingwrong />;
+  }
+
   if (loading) {
     return (
       <LottieView
@@ -90,7 +95,6 @@ function ProfileEdit(props) {
           Keyboard.dismiss();
         }}>
         <View style={styles.container}>
-          {console.log('user', user)}
           <ScrollView>
             <View style={{marginTop: 20, marginHorizontal: 120}}>
               <TouchableOpacity
@@ -106,7 +110,7 @@ function ProfileEdit(props) {
                         borderRadius: 50,
                       }}
                       source={{
-                        uri: `http://180.149.241.208:3022/${user.profile_img}`,
+                        uri: `${baseUrl}/${user.profile_img}`,
                       }}
                     />
                   ) : (
@@ -151,25 +155,24 @@ function ProfileEdit(props) {
                 formData.append('dob', values.dob);
                 formData.append('phone_no', values.phoneNo);
                 formData.append('gender', values.gender);
-                console.log('formdata', formData);
                 if (!photo.data) {
                   Alert.alert('Plese Select profile photo');
                 } else {
                   setLoading(true);
                   axios
-                    .put('http://180.149.241.208:3022/profile', formData, {
+                    .put(`${baseUrl}/profile`, formData, {
                       headers: {
                         Authorization: `bearer ${props.userData.data.token}`,
                       },
                     })
                     .then((response) => {
-                      console.log('response', response);
+                      // console.log('response', response);
                       setLoading(false);
                       props.updateUser(response.data.customer_details);
                       navigation.goBack();
                     })
                     .catch((error) => {
-                      console.log('error', error.response);
+                      // console.log('error', error.response);
                       setLoading(false);
                     });
                 }
@@ -296,6 +299,7 @@ function ProfileEdit(props) {
 const mapStateToProps = (state) => {
   return {
     userData: state.loginReducer.user,
+    error: state.dashboardReducer.error,
   };
 };
 

@@ -8,6 +8,7 @@ import {
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-community/async-storage';
+import {baseUrl} from '../../shared/config';
 
 export const loginRequest = () => {
   return {
@@ -45,7 +46,7 @@ export const login = (data) => {
   return (dispatch) => {
     dispatch(loginRequest());
     axios
-      .post('http://180.149.241.208:3022/login', {
+      .post(`${baseUrl}/login`, {
         email: data.email,
         pass: data.password,
       })
@@ -56,8 +57,11 @@ export const login = (data) => {
         setData(user);
       })
       .catch((error) => {
-        dispatch(loginFaliure(error.message));
-        Toast.show('Incorrect Email or Password');
+        if (error.response.data.message === undefined) {
+          dispatch(loginFaliure(error.message));
+        } else {
+          Toast.show(error.response.data.message);
+        }
       });
   };
 };
@@ -65,12 +69,10 @@ export const login = (data) => {
 export const restoreData = (user) => {
   return (dispatch) => {
     dispatch(storeData(user));
-    console.log('Restoredata');
   };
 };
 
 export const setData = async (user) => {
-  console.log('setData');
   await AsyncStorage.setItem('user', JSON.stringify(user));
 };
 

@@ -20,11 +20,14 @@ import {connect} from 'react-redux';
 import {getCategories, getColors} from '../redux/action/ProductAction';
 import axios from 'axios';
 import Chips from './Chips';
+import {baseUrl} from '../shared/config';
+import Somethingwrong from './Somethingwrong';
 
 /**
  * @author Devashree Patole
  * @description This screen displayes the complete list of products.
  *              The Products can also be filtered based on category,price,color and rating
+ * @param {object} props this object contains the functions to be called in reducer
  * @returns JSX of Product Screen
  */
 
@@ -49,7 +52,7 @@ function Product(props) {
     sortBy: '',
     sortIn: '',
   });
-
+  let error = [];
   const category = props.categoryList;
 
   const getProducts = () => {
@@ -58,7 +61,7 @@ function Product(props) {
       ? (item = props.route.params?.productId)
       : (item = selectedCategory);
     axios
-      .get('http://180.149.241.208:3022/commonProducts', {
+      .get(`${baseUrl}/commonProducts`, {
         params: {
           category_id: item.category_id,
           color_id: selectedColor.color_id,
@@ -77,8 +80,11 @@ function Product(props) {
         setSelectCategory(item);
         setLoading(false);
       })
-      .catch((error) => {
-        console.log(error.response.data);
+      .catch((err) => {
+        // console.log('Products', err.response);
+        if (err.response?.data?.message === undefined) {
+          error = err.response.data;
+        }
         setLoading(false);
       });
   };
@@ -91,7 +97,7 @@ function Product(props) {
         : (colorId = selectedColor.color_id);
     }
     axios
-      .get('http://180.149.241.208:3022/commonProducts', {
+      .get(`${baseUrl}/commonProducts`, {
         params: {
           category_id: '',
           color_id: colorId,
@@ -108,7 +114,7 @@ function Product(props) {
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error.response.data);
+        // console.log(error.response.data);
         setLoading(false);
       });
   };
@@ -125,9 +131,9 @@ function Product(props) {
       color_name: '',
       color_code: '',
     });
-    console.log('selected', selectedPrice);
+    // console.log('selected', selectedPrice);
     axios
-      .get('http://180.149.241.208:3022/commonProducts', {
+      .get(`${baseUrl}/commonProducts`, {
         params: {
           category_id: categoryId,
           color_id: '',
@@ -146,14 +152,14 @@ function Product(props) {
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error.response.data);
+        // console.log(error.response.data);
         setLoading(false);
       });
   };
 
   const getProductsRating = () => {
     axios
-      .get('http://180.149.241.208:3022/commonProducts', {
+      .get(`${baseUrl}/commonProducts`, {
         params: {
           sortBy: 'product_rating',
           sortIn: true,
@@ -165,7 +171,7 @@ function Product(props) {
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error.response.data);
+        // console.log(error.response.data);
         setLoading(false);
       });
   };
@@ -264,6 +270,10 @@ function Product(props) {
     clearColorProducts();
   };
 
+  if (error) {
+    return <Somethingwrong />;
+  }
+
   if (isLoading) {
     return (
       <LottieView
@@ -347,7 +357,7 @@ function Product(props) {
                         <View style={styles.cardImgWrapper}>
                           <ImageBackground
                             source={{
-                              uri: `http://180.149.241.208:3022/${item.product_image}`,
+                              uri: `${baseUrl}/${item.product_image}`,
                             }}
                             resizeMode="cover"
                             style={styles.cardImg}>

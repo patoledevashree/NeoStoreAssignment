@@ -1,6 +1,7 @@
 import {SIGN_OUT} from './types';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import {baseUrl} from '../../shared/config';
 
 export const LogOut = () => {
   return {
@@ -10,7 +11,6 @@ export const LogOut = () => {
 
 export const SignOut = (cartItem, token) => {
   return (dispatch) => {
-    console.log('cartdata2', cartItem);
     let cartCheckOut = [];
     let i = 0;
     for (i; i < cartItem.length; i++) {
@@ -19,28 +19,21 @@ export const SignOut = (cartItem, token) => {
       cartCheckOut[i].total = cartItem[i].total_productCost;
     }
     cartCheckOut[i] = {flag: 'logout'};
-    console.log('cartCheckout', cartCheckOut);
-    console.log('i', i);
     dispatch(LogOut());
     removeData();
     axios
-      .post(
-        'http://180.149.241.208:3022/addProductToCartCheckout',
-        cartCheckOut,
-        {
-          headers: {Authorization: `bearer ${token}`},
-        },
-      )
+      .post(`${baseUrl}/addProductToCartCheckout`, cartCheckOut, {
+        headers: {Authorization: `bearer ${token}`},
+      })
       .then((response) => {
-        console.log('response', response);
+        // console.log('response', response);
       })
       .catch((error) => {
-        console.log('error', error.response);
+        // console.log('error', error.response);
       });
   };
 };
 
 export const removeData = async () => {
   await AsyncStorage.removeItem('user');
-  console.log('SignOut');
 };

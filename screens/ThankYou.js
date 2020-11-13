@@ -3,10 +3,15 @@ import {View, Text, StyleSheet, Button} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 
+/**
+ * @author Devashree Patole
+ * @description This screen is displayed when user placed order
+ * @returns JSX of Thank You screen
+ */
 export default function ThankYou() {
   const navigation = useNavigation();
   return (
-    <View>
+    <View style={{marginVertical: 50}}>
       <View style={{marginHorizontal: 50, marginTop: 50}}>
         <FontAwesome
           name="hands-helping"

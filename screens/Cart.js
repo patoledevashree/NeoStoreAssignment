@@ -19,12 +19,15 @@ import {
 } from '../redux/action/CartAction';
 import {deleteCart} from '../redux/action/CartAction';
 import {useNavigation} from '@react-navigation/native';
+import {baseUrl} from '../shared/config';
+import Somethingwrong from './Somethingwrong';
 
 /**
  * @author Devashree Patole
  * @description This screen contains the lIst of products which are present in cart
  *              and also the total amout of the products.There ius also a button to place order
  *              and to remove products from cart
+ * @param {object} props this constins the cartData from the reducer
  * @returns JSX of cart Screen
  */
 
@@ -51,13 +54,16 @@ function Cart(props) {
   };
 
   const showToast = (item) => {
-    console.log('item', item);
     props.removeFromCart(item);
     if (props.userData.length !== 0) {
       props.deleteCart(item, props.userData.data.token);
     }
     Toast.show('Item Removed from Cart');
   };
+
+  if (props.error) {
+    return <Somethingwrong />;
+  }
 
   if (props.cartData.length === 0) {
     return (
@@ -93,7 +99,7 @@ function Cart(props) {
                     <View style={styles.cardImgWrapper}>
                       <Image
                         source={{
-                          uri: `http://180.149.241.208:3022/${item.product_id.product_image}`,
+                          uri: `${baseUrl}/${item.product_id.product_image}`,
                         }}
                         resizeMode="cover"
                         style={styles.cardImg}
@@ -120,7 +126,17 @@ function Cart(props) {
                         <View style={{flexDirection: 'row', left: 50}}>
                           <TouchableOpacity
                             onPress={() => {
-                              props.increamentQuantity(item);
+                              if (
+                                item.quantity > item.product_id.product_stock
+                              ) {
+                                Toast.show(
+                                  `Only ${item.product_id.product_stock} in stock`,
+                                );
+                              } else if (item.quantity < 10) {
+                                props.increamentQuantity(item);
+                              } else {
+                                Toast.show('Maximum Limit reached');
+                              }
                             }}>
                             <Text style={styles.countButton}>+</Text>
                           </TouchableOpacity>
@@ -131,7 +147,11 @@ function Cart(props) {
 
                           <TouchableOpacity
                             onPress={() => {
-                              props.decrementQuantity(item);
+                              if (item.quantity > 1) {
+                                props.decrementQuantity(item);
+                              } else {
+                                Toast.show('Minimum Quantity Reached');
+                              }
                             }}>
                             <Text style={styles.countButton}>-</Text>
                           </TouchableOpacity>
@@ -167,7 +187,7 @@ function Cart(props) {
                 </Text>
                 <Text style={{fontWeight: 'bold', fontSize: 18}}>GST(5%)</Text>
                 <Text style={{fontWeight: 'bold', fontSize: 18}}>
-                  ToTal Amount
+                  Total Amount
                 </Text>
               </View>
               <View style={{paddingRight: 10}}>
@@ -212,6 +232,7 @@ const mapStateToProps = (state) => {
     loading: state.cartReducer.loading,
     cartData: state.cartReducer.cartData,
     userData: state.loginReducer.user,
+    error: state.dashboardReducer.error,
   };
 };
 const mapDispatchToProps = (dispatch) => {

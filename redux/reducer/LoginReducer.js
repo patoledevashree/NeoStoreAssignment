@@ -27,7 +27,7 @@ const LoginReducer = (state = initialState, action) => {
         error: '',
       };
     }
-    case 'LOGIN_SUCCESS': {
+    case 'LOGIN_FALIURE': {
       return {
         ...state,
         user: [],
@@ -46,7 +46,6 @@ const LoginReducer = (state = initialState, action) => {
     }
 
     case 'UPDATE_USER': {
-      console.log('reducer', action.data);
       return {
         ...state,
         user: action.data,

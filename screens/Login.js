@@ -16,6 +16,7 @@ import {connect} from 'react-redux';
 import {login} from '../redux/action/LoginAction';
 import {getCartData} from '../redux/action/CartAction';
 import LottieView from 'lottie-react-native';
+import Somethingwrong from './Somethingwrong';
 
 const validationSchema = yup.object({
   email: yup.string().email().required(),
@@ -33,7 +34,7 @@ const validationSchema = yup.object({
  * @returns JSX of Login screen.
  */
 
-function Login({userData, login, getCartData, loading}) {
+function Login({userData, login, getCartData, loading, error}) {
   useEffect(() => {
     if (userData?.data?.token != undefined) {
       getCartData(userData.data.token);
@@ -56,8 +57,13 @@ function Login({userData, login, getCartData, loading}) {
 
   const Login = (values, action) => {
     login(values);
-    action.resetForm();
+    // action.resetForm();
   };
+
+  if (error) {
+    return <Somethingwrong />;
+  }
+
   if (loading) {
     return (
       <LottieView
@@ -187,6 +193,7 @@ const mapStateToProps = (state) => {
   return {
     userData: state.loginReducer.user,
     loading: state.loginReducer.loading,
+    error: state.loginReducer.error,
   };
 };
 
