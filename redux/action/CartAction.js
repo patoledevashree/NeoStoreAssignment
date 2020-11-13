@@ -40,10 +40,10 @@ export const addCart = (data) => {
   };
 };
 
-export const removeCart = (data) => {
+export const removeFromCart = (item) => {
   return {
     type: REMOVE_FROM_CART,
-    data: data,
+    data: item,
   };
 };
 
@@ -53,20 +53,33 @@ export const emptyCart = () => {
   };
 };
 
-export const incerment = (data) => {
+export const increamentQuantity = (item) => {
   return {
     type: INCREAMENT_QUANTITY,
-    data: data,
+    data: item,
   };
 };
 
-export const decrement = (data) => {
+export const decrementQuantity = (item) => {
   return {
     type: DECREMENT_QUANTITY,
-    data: data,
+    data: item,
   };
 };
 
+export const restoreCart = (cart) => {
+  return {
+    type: RESTORE_CART,
+    data: cart,
+  };
+};
+
+/**
+ * @author Devashree Patole
+ * @description This function call the api(getCartData) to get cart item present in users account
+ * @param {*} token It constains the token of logged in user
+ * @returns Function retuns the array of cart item present in users account
+ */
 export const getCartData = (token) => {
   return (dispatch) => {
     dispatch(cartDataRequest());
@@ -95,6 +108,15 @@ export const getCartData = (token) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function check if the item that a user wants to add to cart is already present in the cart.
+ * It it is present it will show the toast message of already present else it will call function(addToCart)
+ * to item item in cart
+ * @param {*} product It contains the product detail
+ * @param {*} cartItem It contains the item present in cart
+ * @returns Updated cart items
+ */
 export const checkCart = (product, cartItem) => {
   return (dispatch) => {
     let index = -1;
@@ -111,6 +133,13 @@ export const checkCart = (product, cartItem) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function add the product into the cart into the specified format as required
+ * @param {*} product It contains the product details
+ * @param {*} dispatch It dispatch the action for reducer
+ * @returns Updated cartItem
+ */
 export const addToCart = (product, dispatch) => {
   const data = {
     product_id: product,
@@ -122,13 +151,13 @@ export const addToCart = (product, dispatch) => {
   Toast.show('Item Added to cart');
 };
 
-export const removeFromCart = (item) => {
-  return {
-    type: REMOVE_FROM_CART,
-    data: item,
-  };
-};
-
+/**
+ * @author Devashree Patole
+ * @description This function calls the api(deleteCart) to remove item from the cart
+ * @param {*} item  It contains the item to be deleted
+ * @param {*} token It constains the token of LoggedIn user
+ * @returns Updated cart data
+ */
 export const deleteCart = (item, token) => {
   return (dipatch) => {
     axios
@@ -144,20 +173,13 @@ export const deleteCart = (item, token) => {
   };
 };
 
-export const increamentQuantity = (item) => {
-  return {
-    type: INCREAMENT_QUANTITY,
-    data: item,
-  };
-};
-
-export const decrementQuantity = (item) => {
-  return {
-    type: DECREMENT_QUANTITY,
-    data: item,
-  };
-};
-
+/**
+ * @author Devashree Patole
+ * @description This function call the api(orderProduct) to place order for products in the cart
+ * @param {*} cartItem It contains the cart Item
+ * @param {*} token It constains the token of LoggedIn user
+ * @returns It makes the cart empty
+ */
 export const orderProduct = (cartItem, token) => {
   return (dispatch) => {
     let cartCheckOut = [];
@@ -178,12 +200,5 @@ export const orderProduct = (cartItem, token) => {
       .catch((error) => {
         // console.log('error', error.response);
       });
-  };
-};
-
-export const restoreCart = (cart) => {
-  return {
-    type: RESTORE_CART,
-    data: cart,
   };
 };

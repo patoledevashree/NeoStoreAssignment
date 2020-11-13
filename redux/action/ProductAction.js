@@ -49,6 +49,12 @@ export const getAllProducts = (products) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function calls the api to get the product detail when the product id is passed to the api
+ * @param {*} id It contians the product id
+ * @returns product details
+ */
 export const getProductDetail = (id) => {
   return (dispatch) => {
     dispatch(productDetailRequest());
@@ -66,6 +72,11 @@ export const getProductDetail = (id) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function calls the api to get the list of categories of products
+ * @returns the list of categories
+ */
 export const getCategories = () => {
   return (dispatch) => {
     axios
@@ -80,6 +91,11 @@ export const getCategories = () => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function is calls the api to get the list of colors
+ * @returns List of colors
+ */
 export const getColors = () => {
   return (dispatch) => {
     axios

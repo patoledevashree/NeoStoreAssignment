@@ -14,10 +14,10 @@ import OrderDetail from '../screens/OrderDetail';
 
 /**
  * @author  Devashree Patole
- * @description This screen contains the account details of the user
- *              also the profile image,list of orders,cahnde password,list od address
- *              the user can also update the address
- * @returns JSX of Myaccount Screen
+ * @description This screen provides the stack navigation between the screens .The main screen is userProfile
+ *  i.e MyAccount Screen and it is stack with My Orders, Update Address, Edit Profile,Change Password and
+ * Add Address
+ * @returns Stack navigation of Myaccount Screen
  */
 
 const Stack = createStackNavigator();

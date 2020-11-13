@@ -21,6 +21,7 @@ import {deleteCart} from '../redux/action/CartAction';
 import {useNavigation} from '@react-navigation/native';
 import {baseUrl} from '../shared/config';
 import Somethingwrong from './Somethingwrong';
+import {cardStyles} from '../shared/Styles/cardStyle';
 
 /**
  * @author Devashree Patole
@@ -95,28 +96,28 @@ function Cart(props) {
             {props.cartData.map((item, index) => {
               return (
                 <View key={index}>
-                  <View key={index} style={styles.card}>
-                    <View style={styles.cardImgWrapper}>
+                  <View key={index} style={cardStyles.card}>
+                    <View style={cardStyles.cardImgWrapper}>
                       <Image
                         source={{
                           uri: `${baseUrl}/${item.product_id.product_image}`,
                         }}
                         resizeMode="cover"
-                        style={styles.cardImg}
+                        style={cardStyles.cardImg}
                       />
                     </View>
-                    <View style={styles.cardInfo}>
-                      <Text style={styles.cardTitle}>
+                    <View style={cardStyles.cardInfo}>
+                      <Text style={cardStyles.cardTitle}>
                         {item.product_id.product_name}
                       </Text>
-                      <Text style={styles.cardDetail}>
+                      <Text style={cardStyles.cardDetail}>
                         Quantity : {item.quantity}
                       </Text>
                       <View style={{flexDirection: 'row'}}>
                         <View>
                           <Text
                             style={{
-                              ...styles.cardDetail,
+                              ...cardStyles.cardDetail,
                               color: '#eb9800',
                             }}>
                             {'\u20B9'}
@@ -250,52 +251,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 70,
   },
-  cardWrapper: {
-    width: '90%',
-    alignSelf: 'center',
-  },
-  card: {
-    marginTop: 6,
-    height: 150,
-    marginBottom: 20,
-    flexDirection: 'row',
-    shadowColor: '#777',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.6,
-    shadowRadius: 2,
-    elevation: 5,
-    borderRadius: 5,
-  },
-  cardImgWrapper: {
-    flex: 1,
-  },
-  cardImg: {
-    height: '100%',
-    width: '100%',
-    alignSelf: 'center',
-    borderRadius: 8,
-    borderBottomRightRadius: 0,
-    borderTopRightRadius: 0,
-  },
-  cardInfo: {
-    flex: 1.5,
-    padding: 20,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderLeftWidth: 1,
-    borderBottomRightRadius: 8,
-    borderTopRightRadius: 8,
-    backgroundColor: '#fff',
-  },
-  cardTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  cardDetail: {
-    fontSize: 18,
-    color: '#444',
-    paddingTop: 5,
-  },
+
   countButton: {
     height: 30,
     width: 30,

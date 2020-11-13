@@ -18,10 +18,10 @@ const Stack = createStackNavigator();
 
 /**
  * @author Devashree Patole
- * @description This file provides the stack navigation of the
- *              Dashboard and Cart screens.
- * @params {object} userData  this object constins the user information
- * @returns JSX of the stack navigation
+ * @description This file provides the stack navigation between   different screens.The first scrren is dashboard and then
+ * it is stacked with  the Products ,product Detail, Cart,Orders and Order summary screens
+ * @param {object} userData  this object constins the user information which is stored in reducer
+ * @returns Stack Navigation of Dashboard Screen
  */
 function DashboardStack({userData, cartData}) {
   const navigation = useNavigation();

@@ -9,6 +9,14 @@ export const LogOut = () => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function is called to logout from the app and also calls the api to add
+ *  items in cart to database
+ * @param {*} cartItem
+ * @param {*} token
+ * @returns disptach action to delete data in local storsge
+ */
 export const SignOut = (cartItem, token) => {
   return (dispatch) => {
     let cartCheckOut = [];
@@ -34,6 +42,10 @@ export const SignOut = (cartItem, token) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description Removes data from local storage
+ */
 export const removeData = async () => {
   await AsyncStorage.removeItem('user');
 };

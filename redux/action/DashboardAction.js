@@ -49,6 +49,11 @@ export const topRatedProductFaliure = (error) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function calls the api to get list of categories of products
+ * @returns List of categories
+ */
 export const getDashboard = () => {
   return (dispatch) => {
     dispatch(categoryRequest());
@@ -67,6 +72,12 @@ export const getDashboard = () => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function call the api to get the top rated products to be displayed on
+ * the dashboard of the app
+ * @returns Top rated products
+ */
 export const getTopRatedProduct = () => {
   return (dispatch) => {
     dispatch(topRatedProductRequest());

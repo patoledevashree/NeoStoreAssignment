@@ -5,15 +5,14 @@ import ForgetPassword from '../screens/ForgetPassword';
 import SetPassword from '../screens/SetPassword';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
-import RegisterStack from './RegisterStack';
 
 const Stack = createStackNavigator();
 
 /**
  * @author Devashree Patole
- * @description This file provides the stack navigation of the
- *              Login ,ForgotPassword and SetPassword screens.
- * @returns JSX of the stack navigation
+ * @description This file provides the stack navigation between different Screens.The main screen is Login
+ * and stacked with the  ForgotPassword and SetPassword screens.
+ * @returns Stack navigation Of login Screen
  */
 export default function LoginStack() {
   const navigation = useNavigation();
@@ -70,19 +69,6 @@ export default function LoginStack() {
           },
         }}
       />
-      {/* <Stack.Screen name='RegisterStack' component={RegisterStack}
-        options={{
-          title: 'Register',
-          headerStyle: {
-            backgroundColor: '#2874F0',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-
-            fontSize: 25
-          },
-        }}
-      /> */}
     </Stack.Navigator>
   );
 }

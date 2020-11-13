@@ -42,6 +42,12 @@ export const updateData = (user) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function call the api to authenticate th euser based on email and password
+ * @param {*} data It contains the email and password
+ * @returns response of user
+ */
 export const login = (data) => {
   return (dispatch) => {
     dispatch(loginRequest());
@@ -66,16 +72,34 @@ export const login = (data) => {
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function restore the userdata when the usr minimizes and return back to app
+ * @param {*} user It contains user data present in local storage
+ * @returns dispacht the data to action to restore it
+ */
 export const restoreData = (user) => {
   return (dispatch) => {
     dispatch(storeData(user));
   };
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function stores the user informatipn into the async storage
+ * @param {*} user It contains the user information
+ */
 export const setData = async (user) => {
   await AsyncStorage.setItem('user', JSON.stringify(user));
 };
 
+/**
+ * @author Devashree Patole
+ * @description This function updates th e user information into the local storage
+ * when the user updates its details
+ * @param {*} userDetail It contains the user information
+ * @returns Updated user data
+ */
 export const updateUser = (userDetail) => {
   return async (dispatch) => {
     let user = await AsyncStorage.getItem('user');

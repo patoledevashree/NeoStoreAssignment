@@ -29,6 +29,7 @@ import {getCartData} from '../redux/action/CartAction';
 import {restoreCart} from '../redux/action/CartAction';
 import {baseUrl} from '../shared/config';
 import Somethingwrong from './Somethingwrong';
+import {cardStyles} from '../shared/Styles/cardStyle';
 
 /**
  * @author Devashree Patole
@@ -200,7 +201,7 @@ function Dashboard(props) {
                 <View style={{backgroundColor: '#e7e7e7', marginBottom: 40}}>
                   {props.topRatedProduct.map((item, index) => {
                     return (
-                      <View key={index} style={styles.cardWrapper}>
+                      <View key={index} style={cardStyles.cardWrapper}>
                         <TouchableOpacity
                           onPress={() => {
                             navigation.navigate('ProductDetail', {
@@ -209,14 +210,14 @@ function Dashboard(props) {
                                 item.DashboardProducts[0].product_name,
                             });
                           }}>
-                          <View style={styles.card}>
-                            <View style={styles.cardImgWrapper}>
+                          <View style={cardStyles.card}>
+                            <View style={cardStyles.cardImgWrapper}>
                               <ImageBackground
                                 source={{
                                   uri: `${baseUrl}/${item.DashboardProducts[0].product_image}`,
                                 }}
                                 resizeMode="cover"
-                                style={styles.cardImg}>
+                                style={cardStyles.cardImg}>
                                 <View style={styles.productView}>
                                   <Text
                                     style={{
@@ -387,33 +388,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     borderRadius: 5,
-  },
-  cardWrapper: {
-    width: '90%',
-    alignSelf: 'center',
-  },
-  card: {
-    marginTop: 10,
-    height: 150,
-    marginBottom: 20,
-    flexDirection: 'row',
-    shadowColor: '#777',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.6,
-    shadowRadius: 2,
-    elevation: 5,
-    borderRadius: 5,
-  },
-  cardImgWrapper: {
-    flex: 1,
-  },
-  cardImg: {
-    height: '100%',
-    width: '100%',
-    alignSelf: 'center',
-    borderRadius: 8,
-    borderBottomRightRadius: 0,
-    borderTopRightRadius: 0,
   },
   productView: {
     flex: 1,

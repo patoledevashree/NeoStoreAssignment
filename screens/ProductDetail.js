@@ -7,6 +7,7 @@ import {
   Button,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import {Rating} from 'react-native-ratings';
@@ -20,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import {checkCart} from '../redux/action/CartAction';
 import Share from 'react-native-share';
 import {baseUrl} from '../shared/config';
+import ImgToBase64 from 'react-native-image-base64';
 
 /**
  * @author Devashree Patole
@@ -40,7 +42,6 @@ function ProductDetail(props) {
   const [rate, setrating] = useState(false);
   const navigation = useNavigation();
   const [cartItem, setItem] = useState([]);
-  console.log('ProductDetail', productDetail);
   const addCart = () => {
     props.checkCart(productDetail, props.cartData);
   };
@@ -49,9 +50,20 @@ function ProductDetail(props) {
     setrating(false);
   };
 
-  const shareProduct = async () => {
+  const shareProduct = () => {
+    let img = '';
+    ImgToBase64.getBase64String(`${baseUrl}/${productDetail.product_image}`)
+      .then((base64String) => {
+        img = 'data:image/jpeg;base64,' + base64String;
+        share(img);
+      })
+      .catch((err) => console.log('reee', err));
+  };
+
+  const share = async (img) => {
     const shareOptions = {
-      message: `${baseUrl}/getProductByProdId/${product_id}`,
+      message: `${productDetail.product_name} ${baseUrl}/getProductByProdId/${product_id}`,
+      url: img,
     };
 
     try {
@@ -144,6 +156,14 @@ function ProductDetail(props) {
                 }}>
                 Product By: {productDetail.product_producer}
               </Text>
+              <Text style={{fontSize: 18, marginTop: 5}}>
+                Status :{' '}
+                {productDetail.product_stock !== 0 ? (
+                  <Text style={{color: 'green'}}>In Stock</Text>
+                ) : (
+                  <Text style={{color: 'red'}}>Out Of Stock</Text>
+                )}
+              </Text>
             </View>
             <FontAwesome
               name="share-alt"
@@ -218,10 +238,15 @@ function ProductDetail(props) {
                 <Button
                   title="Shop Now"
                   onPress={() => {
-                    navigation.navigate('OrderSummary', {
-                      total: '',
-                      product: productDetail,
-                    });
+                    if (props.userData.length === 0) {
+                      Alert.alert('You are not Logged In');
+                      navigation.navigate('Login');
+                    } else {
+                      navigation.navigate('OrderSummary', {
+                        total: '',
+                        product: productDetail,
+                      });
+                    }
                   }}
                 />
               </View>
@@ -230,9 +255,12 @@ function ProductDetail(props) {
                   title="Rate"
                   color={'#eb9800'}
                   onPress={() => {
-                    props.userData.length === 0
-                      ? navigation.navigate('Login')
-                      : setrating(true);
+                    if (props.userData.length === 0) {
+                      Alert.alert('You are not Logged In');
+                      navigation.navigate('Login');
+                    } else {
+                      setrating(true);
+                    }
                   }}
                 />
               </View>
