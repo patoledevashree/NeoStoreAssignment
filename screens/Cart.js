@@ -35,7 +35,7 @@ import {cardStyles} from '../shared/Styles/cardStyle';
 function Cart(props) {
   const navigation = useNavigation();
   let count = 0;
-  for (let i = 0; i < props.cartData.length; i++) {
+  for (let i = 0; i < props.cartData?.length; i++) {
     count = count + parseInt(props.cartData[i].total_productCost);
   }
   let gst = parseInt(count * 0.05);
@@ -66,7 +66,7 @@ function Cart(props) {
     return <Somethingwrong />;
   }
 
-  if (props.cartData.length === 0) {
+  if (props.cartData?.length === 0) {
     return (
       <View style={{marginVertical: 20}}>
         <FontAwesome
@@ -93,7 +93,7 @@ function Cart(props) {
       <View style={{flex: 1}}>
         <View style={styles.container}>
           <ScrollView>
-            {props.cartData.map((item, index) => {
+            {props.cartData?.map((item, index) => {
               return (
                 <View key={index}>
                   <View key={index} style={cardStyles.card}>

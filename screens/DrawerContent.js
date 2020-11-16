@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Alert, Image} from 'react-native';
+import {View, StyleSheet, Alert, Image, Text} from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import {Avatar, Title, Drawer, Caption} from 'react-native-paper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
@@ -51,6 +51,9 @@ function DrawerContent({...props}) {
                 paddingBottom: 20,
                 borderBottomStartRadius: 10,
                 borderBottomEndRadius: 10,
+                marginTop: -5,
+                flex: 1,
+                alignItems: 'center',
               }}>
               <View style={styles.userInfo}>
                 {props.userData.data.customer_details.profile_img ? (
@@ -72,7 +75,7 @@ function DrawerContent({...props}) {
                   />
                 )}
               </View>
-              <View style={{paddingLeft: 40}}>
+              <View>
                 <Title>
                   {props.userData.data?.customer_details?.first_name}{' '}
                   {props.userData.data?.customer_details?.last_name}
@@ -166,6 +169,27 @@ function DrawerContent({...props}) {
     return (
       <View style={{flex: 1}}>
         <DrawerContentScrollView {...props}>
+          <View
+            style={{
+              backgroundColor: '#3d87ff',
+              marginBottom: 20,
+              paddingBottom: 20,
+              borderBottomStartRadius: 10,
+              borderBottomEndRadius: 10,
+              marginTop: -5,
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                paddingTop: 20,
+                paddingLeft: 10,
+                fontSize: 22,
+                textAlign: 'center',
+                fontWeight: 'bold',
+              }}>
+              NeoSTORE
+            </Text>
+          </View>
           <Drawer.Section>
             <DrawerItem
               icon={({color, size}) => (
@@ -270,7 +294,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userInfo: {
-    marginLeft: 70,
     paddingTop: 20,
   },
 });

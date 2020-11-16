@@ -120,13 +120,16 @@ export const getCartData = (token) => {
 export const checkCart = (product, cartItem) => {
   return (dispatch) => {
     let index = -1;
-    for (let i = 0; i < cartItem.length; i++) {
-      if (product.product_id === cartItem[i].product_id.product_id) {
-        Toast.show('Already Added to Cart');
-        index = 1;
-        break;
+    if (cartItem?.length) {
+      for (let i = 0; i < cartItem.length; i++) {
+        if (product.product_id === cartItem[i].product_id.product_id) {
+          Toast.show('Already Added to Cart');
+          index = 1;
+          break;
+        }
       }
     }
+
     if (index === -1) {
       addToCart(product, dispatch);
     }

@@ -33,7 +33,18 @@ const validationSchema = yup.object({
     .string()
     .required()
     .oneOf([yup.ref('password'), null], 'Passwords must match'),
-  Phone: yup.string().required().min(10).max(10),
+  Phone: yup
+    .string()
+    .required()
+    .min(10)
+    .max(10)
+    .test('firstLetter', 'First letter should be greater than 6', function (
+      val,
+    ) {
+      if (val) {
+        return val[0] > 6;
+      }
+    }),
   Gender: yup.string().required(),
 });
 
@@ -76,272 +87,284 @@ export default function Register() {
     return <Somethingwrong />;
   }
 
-  if (loading) {
-    return (
-      <LottieView
-        source={require('../assests/images/4383-circle-loader.json')}
-        autoPlay
-        loop
-      />
-    );
-  } else {
-    return (
-      <ScrollView>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            Keyboard.dismiss();
-          }}>
-          <ScrollView>
-            <View style={styles.container}>
+  return (
+    <ScrollView>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}>
+        <ScrollView>
+          <View style={styles.container}>
+            {!loading && (
               <Text style={styles.text}>
                 Neo<Text style={{color: '#2874F0'}}>Store</Text>
               </Text>
-              <Formik
-                initialValues={{
-                  FirstName: '',
-                  LastName: '',
-                  Email: '',
-                  password: '',
-                  confirmPwd: '',
-                  Phone: '',
-                  Gender: '',
-                }}
-                validationSchema={validationSchema}
-                onSubmit={(values, action) => {
-                  setLoading(true);
-                  axios
-                    .post(`${baseUrl}/register`, {
-                      first_name: values.FirstName,
-                      last_name: values.LastName,
-                      email: values.Email,
-                      pass: values.password,
-                      confirmPass: values.confirmPwd,
-                      phone_no: values.Phone,
-                      gender: values.Gender,
-                    })
-                    .then((response) => {
-                      // console.log('response', response);
-                      Toast.show('Registered Successfully');
-                      navigation.navigate('Login');
-                      action.resetForm({});
-                      setLoading(false);
-                    })
-                    .catch((err) => {
-                      // console.log(err.response);
-                      setLoading(false);
-                      if (err.response?.data?.message === undefined) {
-                        error = err.response.data;
-                      } else {
-                        Toast.show(err.response.data.message, Toast.LONG);
-                      }
-                    });
-                }}>
-                {(props) => (
-                  <View>
+            )}
+            <Formik
+              initialValues={{
+                FirstName: '',
+                LastName: '',
+                Email: '',
+                password: '',
+                confirmPwd: '',
+                Phone: '',
+                Gender: '',
+              }}
+              validationSchema={validationSchema}
+              onSubmit={(values, action) => {
+                setLoading(true);
+                axios
+                  .post(`${baseUrl}/register`, {
+                    first_name: values.FirstName,
+                    last_name: values.LastName,
+                    email: values.Email,
+                    pass: values.password,
+                    confirmPass: values.confirmPwd,
+                    phone_no: values.Phone,
+                    gender: values.Gender,
+                  })
+                  .then((response) => {
+                    // console.log('response', response);
+                    Toast.show('Registered Successfully');
+                    navigation.navigate('Login');
+
+                    setLoading(false);
+                  })
+                  .catch((err) => {
+                    // console.log(err.response);
+                    setLoading(false);
+                    if (err.response?.data?.message === undefined) {
+                      error = err.response.data;
+                    } else {
+                      Toast.show(err.response.data.message, Toast.LONG);
+                    }
+                  });
+              }}>
+              {(props) => {
+                if (loading === false) {
+                  return (
                     <View>
-                      <FontAwesome
-                        style={{position: 'relative', top: 35, left: 15}}
-                        name="user"
-                        size={20}
-                        color="#777"
-                      />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="FirstName"
-                        onChangeText={props.handleChange('FirstName')}
-                        value={props.values.FirstName}
-                        onBlur={props.handleBlur('FirstName')}
-                      />
-                      {props.touched.FirstName && props.errors.FirstName && (
-                        <Text style={styles.error}>
-                          {props.touched.FirstName && props.errors.FirstName}
-                        </Text>
-                      )}
-                    </View>
-                    <View>
-                      <FontAwesome
-                        style={{position: 'relative', top: 35, left: 15}}
-                        name="user"
-                        size={20}
-                        color="#777"
-                      />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="LastName"
-                        onChangeText={props.handleChange('LastName')}
-                        value={props.values.LastName}
-                        onBlur={props.handleBlur('LastName')}
-                      />
-                      {props.touched.LastName && props.errors.LastName && (
-                        <Text style={styles.error}>
-                          {props.touched.LastName && props.errors.LastName}
-                        </Text>
-                      )}
-                    </View>
-
-                    <View>
-                      <FontAwesome
-                        style={{position: 'relative', top: 35, left: 15}}
-                        name="envelope"
-                        size={20}
-                        color="#777"
-                      />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Email"
-                        onChangeText={props.handleChange('Email')}
-                        value={props.values.Email}
-                        onBlur={props.handleBlur('Email')}
-                      />
-                      {props.touched.Email && props.errors.Email && (
-                        <Text style={styles.error}>
-                          {props.touched.Email && props.errors.Email}
-                        </Text>
-                      )}
-                    </View>
-
-                    <View>
-                      <FontAwesome
-                        style={{position: 'relative', top: 35, left: 15}}
-                        name="lock"
-                        size={20}
-                        color="#777"
-                      />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Password"
-                        secureTextEntry={securePwd}
-                        onChangeText={props.handleChange('password')}
-                        value={props.values.password}
-                        onBlur={props.handleBlur('password')}
-                      />
-                      <FontAwesome
-                        style={{position: 'absolute', top: 35, right: 5}}
-                        name={pwd_eyeStyle}
-                        size={20}
-                        color="#777"
-                        onPress={handlePwdClick}
-                      />
-
-                      {props.touched.password && props.errors.password && (
-                        <Text style={styles.error}>
-                          {props.touched.password && props.errors.password}
-                        </Text>
-                      )}
-                    </View>
-
-                    <View>
-                      <FontAwesome
-                        style={{position: 'relative', top: 35, left: 15}}
-                        name="lock"
-                        size={20}
-                        color="#777"
-                      />
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Confirm Password"
-                        secureTextEntry={secureCrfm}
-                        onChangeText={props.handleChange('confirmPwd')}
-                        value={props.values.confirmPwd}
-                        onBlur={props.handleBlur('confirmPwd')}
-                      />
-                      <FontAwesome
-                        style={{position: 'absolute', top: 35, right: 5}}
-                        name={crf_eyeStyle}
-                        size={20}
-                        color="#777"
-                        onPress={handleClick}
-                      />
-
-                      {props.touched.confirmPwd && props.errors.confirmPwd && (
-                        <Text style={styles.error}>
-                          {props.touched.confirmPwd && props.errors.confirmPwd}
-                        </Text>
-                      )}
-                    </View>
-
-                    <View>
-                      <FontAwesome
-                        style={{position: 'relative', top: 35, left: 15}}
-                        name="user"
-                        size={20}
-                        color="#777"
-                      />
-                      <TextInput
-                        style={styles.input}
-                        keyboardType={'numeric'}
-                        placeholder="Phone Number"
-                        onChangeText={props.handleChange('Phone')}
-                        value={props.values.Phone}
-                        onBlur={props.handleBlur('Phone')}
-                      />
-                      {props.touched.Phone && props.errors.Phone && (
-                        <Text style={styles.error}>
-                          {props.touched.Phone && props.errors.Phone}
-                        </Text>
-                      )}
-                    </View>
-                    <View style={{flexDirection: 'row', marginTop: 20}}>
-                      <Text style={{paddingRight: 10, fontSize: 18}}>
-                        Gender
-                      </Text>
-                      <RadioForm
-                        radio_props={radio_props}
-                        initial={-1}
-                        formHorizontal={true}
-                        buttonColor={'#2874F0'}
-                        onPress={(val) => {
-                          if (val === 0) {
-                            props.setFieldValue('Gender', 'Male');
-                          } else {
-                            props.setFieldValue('Gender', 'Female');
-                          }
-                        }}
-                        selectedButtonColor={'#2874F0'}
-                        labelStyle={{fontSize: 15, paddingRight: 10}}
-                      />
-                    </View>
-
-                    <TouchableOpacity onPress={props.handleSubmit}>
-                      <View style={styles.button}>
-                        <Text
-                          style={{
-                            color: 'white',
-                            fontSize: 20,
-                            textAlign: 'center',
-                            padding: 5,
-                          }}>
-                          Register
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        marginLeft: 10,
-                        marginTop: 10,
-                      }}>
                       <View>
-                        <Text>Already have an Account?</Text>
+                        <FontAwesome
+                          style={{position: 'relative', top: 35, left: 15}}
+                          name="user"
+                          size={20}
+                          color="#777"
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="FirstName"
+                          onChangeText={props.handleChange('FirstName')}
+                          value={props.values.FirstName}
+                          onBlur={props.handleBlur('FirstName')}
+                        />
+                        {props.touched.FirstName && props.errors.FirstName && (
+                          <Text style={styles.error}>
+                            {props.touched.FirstName && props.errors.FirstName}
+                          </Text>
+                        )}
                       </View>
-                      <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate('Login');
-                        }}>
-                        <View>
-                          <Text style={styles.underLineText}>SignIn</Text>
+                      <View>
+                        <FontAwesome
+                          style={{position: 'relative', top: 35, left: 15}}
+                          name="user"
+                          size={20}
+                          color="#777"
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="LastName"
+                          onChangeText={props.handleChange('LastName')}
+                          value={props.values.LastName}
+                          onBlur={props.handleBlur('LastName')}
+                        />
+                        {props.touched.LastName && props.errors.LastName && (
+                          <Text style={styles.error}>
+                            {props.touched.LastName && props.errors.LastName}
+                          </Text>
+                        )}
+                      </View>
+
+                      <View>
+                        <FontAwesome
+                          style={{position: 'relative', top: 35, left: 15}}
+                          name="envelope"
+                          size={20}
+                          color="#777"
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Email"
+                          onChangeText={props.handleChange('Email')}
+                          value={props.values.Email}
+                          onBlur={props.handleBlur('Email')}
+                        />
+                        {props.touched.Email && props.errors.Email && (
+                          <Text style={styles.error}>
+                            {props.touched.Email && props.errors.Email}
+                          </Text>
+                        )}
+                      </View>
+
+                      <View>
+                        <FontAwesome
+                          style={{position: 'relative', top: 35, left: 15}}
+                          name="lock"
+                          size={20}
+                          color="#777"
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Password"
+                          secureTextEntry={securePwd}
+                          onChangeText={props.handleChange('password')}
+                          value={props.values.password}
+                          onBlur={props.handleBlur('password')}
+                        />
+                        <FontAwesome
+                          style={{position: 'absolute', top: 35, right: 5}}
+                          name={pwd_eyeStyle}
+                          size={20}
+                          color="#777"
+                          onPress={handlePwdClick}
+                        />
+
+                        {props.touched.password && props.errors.password && (
+                          <Text style={styles.error}>
+                            {props.touched.password && props.errors.password}
+                          </Text>
+                        )}
+                      </View>
+
+                      <View>
+                        <FontAwesome
+                          style={{position: 'relative', top: 35, left: 15}}
+                          name="lock"
+                          size={20}
+                          color="#777"
+                        />
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Confirm Password"
+                          secureTextEntry={secureCrfm}
+                          onChangeText={props.handleChange('confirmPwd')}
+                          value={props.values.confirmPwd}
+                          onBlur={props.handleBlur('confirmPwd')}
+                        />
+                        <FontAwesome
+                          style={{position: 'absolute', top: 35, right: 5}}
+                          name={crf_eyeStyle}
+                          size={20}
+                          color="#777"
+                          onPress={handleClick}
+                        />
+
+                        {props.touched.confirmPwd &&
+                          props.errors.confirmPwd && (
+                            <Text style={styles.error}>
+                              {props.touched.confirmPwd &&
+                                props.errors.confirmPwd}
+                            </Text>
+                          )}
+                      </View>
+
+                      <View>
+                        <FontAwesome
+                          style={{position: 'relative', top: 35, left: 15}}
+                          name="user"
+                          size={20}
+                          color="#777"
+                        />
+                        <TextInput
+                          style={styles.input}
+                          keyboardType={'numeric'}
+                          placeholder="Phone Number"
+                          onChangeText={props.handleChange('Phone')}
+                          value={props.values.Phone}
+                          onBlur={props.handleBlur('Phone')}
+                        />
+                        {props.touched.Phone && props.errors.Phone && (
+                          <Text style={styles.error}>
+                            {props.touched.Phone && props.errors.Phone}
+                          </Text>
+                        )}
+                      </View>
+                      <View style={{flexDirection: 'row', marginTop: 20}}>
+                        <Text style={{paddingRight: 10, fontSize: 18}}>
+                          Gender
+                        </Text>
+                        <RadioForm
+                          radio_props={radio_props}
+                          initial={-1}
+                          animation={false}
+                          formHorizontal={true}
+                          buttonColor={'#2874F0'}
+                          onPress={(val) => {
+                            if (val === 0) {
+                              props.setFieldValue('Gender', 'Male');
+                            } else {
+                              props.setFieldValue('Gender', 'Female');
+                            }
+                          }}
+                          selectedButtonColor={'#2874F0'}
+                          labelStyle={{fontSize: 15, paddingRight: 10}}
+                        />
+                      </View>
+                      {props.touched.Gender && props.errors.Gender && (
+                        <Text style={styles.error}>
+                          {props.touched.Gender && props.errors.Gender}
+                        </Text>
+                      )}
+
+                      <TouchableOpacity onPress={props.handleSubmit}>
+                        <View style={styles.button}>
+                          <Text
+                            style={{
+                              color: 'white',
+                              fontSize: 20,
+                              textAlign: 'center',
+                              padding: 5,
+                            }}>
+                            Register
+                          </Text>
                         </View>
                       </TouchableOpacity>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginLeft: 10,
+                          marginTop: 10,
+                        }}>
+                        <View>
+                          <Text>Already have an Account?</Text>
+                        </View>
+                        <TouchableOpacity
+                          onPress={() => {
+                            navigation.navigate('Login');
+                          }}>
+                          <View>
+                            <Text style={styles.underLineText}>SignIn</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                )}
-              </Formik>
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
-      </ScrollView>
-    );
-  }
+                  );
+                } else {
+                  return (
+                    <LottieView
+                      source={require('../assests/images/4383-circle-loader.json')}
+                      autoPlay
+                      loop
+                    />
+                  );
+                }
+              }}
+            </Formik>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({

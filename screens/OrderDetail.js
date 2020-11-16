@@ -5,6 +5,9 @@ import {baseUrl} from '../shared/config';
 import {cardStyles} from '../shared/Styles/cardStyle';
 import axios from 'axios';
 import {connect} from 'react-redux';
+import {PermissionsAndroid, Alert} from 'react-native';
+import RNFetchBlob from 'rn-fetch-blob';
+
 /**
  * @author Devashree Patole
  * @description This screen contains the oirdwr detail tob be displayed
@@ -15,22 +18,60 @@ function OrderDetail({route, userData}) {
   const orders = route.params.data;
   const totalCost = orders[0].total_cartCost;
 
-  // const download = () => {
-  //   let orderData = {};
-  //   orderData.product_details = orders;
-  //   orderData._id = orders[0].order_id;
-  //   console.log('orders', orderData);
-  //   axios
-  //     .post(`${baseUrl}/getInvoiceOfOrder`, orderData, {
-  //       headers: {Authorization: `bearer ${userData.data.token}`},
-  //     })
-  //     .then((response) => {
-  //       console.log('response', response);
-  //     })
-  //     .catch((error) => {
-  //       console.log('error', error);
-  //     });
-  // };
+  const download = () => {
+    let orderData = {};
+    orderData.product_details = orders;
+    orderData._id = orders[0].order_id;
+    console.log('orders', orderData);
+    axios
+      .post(`${baseUrl}/getInvoiceOfOrder`, orderData, {
+        headers: {Authorization: `bearer ${userData.data.token}`},
+      })
+      .then((response) => {
+        console.log('response', response);
+        downloadFile(response.data.receipt);
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
+  };
+
+  const downloadFile = async (data) => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        actualDownload(data);
+      } else {
+        Alert.alert(
+          'Permission Denied!',
+          'You need to give storage permission to download the file',
+        );
+      }
+    } catch (err) {
+      console.warn('err', err);
+    }
+  };
+
+  const actualDownload = (data) => {
+    RNFetchBlob.config({
+      fileCache: true,
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        mediaScannable: true,
+      },
+    })
+      .fetch('GET', `${baseUrl}/${data}`, {})
+      .then((res) => {
+        console.log('The file saved to ', res.path());
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <View style={{marginBottom: 50}}>
@@ -73,13 +114,15 @@ function OrderDetail({route, userData}) {
             onPress={() => {
               download();
             }}>
-            {/* <View
+            <View
               style={{
                 width: 300,
                 height: 50,
                 backgroundColor: '#2874F0',
                 borderRadius: 8,
                 marginBottom: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
                 marginLeft: 50,
               }}>
               <Text
@@ -91,7 +134,7 @@ function OrderDetail({route, userData}) {
                 }}>
                 Download Invoice As Pdf
               </Text>
-            </View> */}
+            </View>
           </TouchableOpacity>
         </ScrollView>
       </View>

@@ -9,6 +9,7 @@ import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-community/async-storage';
 import {baseUrl} from '../../shared/config';
+import {Alert} from 'react-native';
 
 export const loginRequest = () => {
   return {
@@ -64,8 +65,10 @@ export const login = (data) => {
       })
       .catch((error) => {
         if (error.response.data.message === undefined) {
+          Alert.alert('SomeThing Went Wrong .Please Try again later');
           dispatch(loginFaliure(error.message));
         } else {
+          dispatch(loginFaliure(error.message));
           Toast.show(error.response.data.message);
         }
       });

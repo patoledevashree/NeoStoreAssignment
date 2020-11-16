@@ -65,9 +65,8 @@ export const getDashboard = () => {
       })
       .catch((error) => {
         // console.log('Dashboarderror1', error.response);
-        if (error.response?.data?.message === undefined) {
-          dispatch(categoryFaliure(error.response.data));
-        }
+
+        dispatch(categoryFaliure('Something went wrong'));
       });
   };
 };
@@ -89,9 +88,8 @@ export const getTopRatedProduct = () => {
       })
       .catch((error) => {
         // console.log('dashboard', error.response);
-        if (error.response?.data?.message === undefined) {
-          dispatch(topRatedProductFaliure(error.response.data));
-        }
+
+        dispatch(topRatedProductFaliure('Something Went wrong'));
       });
   };
 };

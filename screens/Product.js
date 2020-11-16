@@ -53,7 +53,7 @@ function Product(props) {
     sortBy: '',
     sortIn: '',
   });
-  let error = '';
+  const [error, setError] = useState('');
   const category = props.categoryList;
 
   const getProducts = () => {
@@ -82,10 +82,10 @@ function Product(props) {
         setLoading(false);
       })
       .catch((err) => {
-        // console.log('Products', err.response);
-        if (err.response?.data?.message === undefined) {
-          error = err.response.data;
-        }
+        console.log('Products', err.response);
+
+        setError('SomeThing Went wrong');
+
         setLoading(false);
       });
   };

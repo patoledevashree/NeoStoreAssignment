@@ -60,10 +60,6 @@ function Login({userData, login, getCartData, loading, error}) {
     // action.resetForm();
   };
 
-  if (error) {
-    return <Somethingwrong />;
-  }
-
   if (loading) {
     return (
       <LottieView
@@ -206,9 +202,12 @@ const mapDispatchToProps = (dispatch) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 60,
-    paddingTop: 30,
-    marginVertical: 20,
+    // marginHorizontal: 30,
+    // paddingTop: 30,
+    // marginVertical: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
     borderRadius: 1,
