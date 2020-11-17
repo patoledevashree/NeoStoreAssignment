@@ -264,7 +264,7 @@ function Product(props) {
 
   const productByRating = () => {
     setLoading(true);
-    clearColorProducts();
+    clearColorProducts(selectedCategory);
   };
 
   if (error) {
