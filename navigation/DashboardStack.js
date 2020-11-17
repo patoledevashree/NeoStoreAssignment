@@ -8,7 +8,6 @@ import Cart from '../screens/Cart';
 import {View, Text} from 'react-native';
 import ProductDetail from '../screens/ProductDetail';
 import Product from '../screens/Product';
-import {connect} from 'react-redux';
 import CartIcon from '../screens/CartIcon';
 import OrderSummary from '../screens/OrderSummary';
 import SelectAddress from '../screens/SelectAddress';
@@ -23,7 +22,7 @@ const Stack = createStackNavigator();
  * @param {object} userData  this object constins the user information which is stored in reducer
  * @returns Stack Navigation of Dashboard Screen
  */
-function DashboardStack({userData, cartData}) {
+export default function DashboardStack() {
   const navigation = useNavigation();
   return (
     <Stack.Navigator>
@@ -133,12 +132,3 @@ function DashboardStack({userData, cartData}) {
     </Stack.Navigator>
   );
 }
-
-const mapStateToProps = (state) => {
-  return {
-    userData: state.loginReducer.user,
-    cartData: state.cartReducer.cartData,
-  };
-};
-
-export default connect(mapStateToProps)(DashboardStack);

@@ -10,6 +10,7 @@ const initialState = {
   cartData: [],
   loading: true,
   error: '',
+  order: [],
 };
 
 const CartReducer = (state = initialState, action) => {
@@ -92,6 +93,12 @@ const CartReducer = (state = initialState, action) => {
       };
     }
 
+    case 'GET_ORDER': {
+      return {
+        ...state,
+        order: action.data,
+      };
+    }
     case 'INCREAMENT_QUANTITY': {
       let arrary = state.cartData.map((item) => {
         if (item.product_id.product_id === action.data.product_id.product_id) {
@@ -105,7 +112,10 @@ const CartReducer = (state = initialState, action) => {
           return item;
         }
       });
-
+      _storeData = async () => {
+        await AsyncStorage.setItem('cartData', JSON.stringify(arrary));
+      };
+      _storeData();
       return {
         ...state,
         cartData: arrary,
@@ -125,7 +135,10 @@ const CartReducer = (state = initialState, action) => {
           return item;
         }
       });
-
+      _storeData = async () => {
+        await AsyncStorage.setItem('cartData', JSON.stringify(arrary));
+      };
+      _storeData();
       return {
         ...state,
         cartData: arrary,

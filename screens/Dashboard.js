@@ -74,7 +74,9 @@ function Dashboard(props) {
   const restoreCartData = async () => {
     const cart = await AsyncStorage.getItem('cartData');
     const parseData = await JSON.parse(cart);
-    props.restoreCart(parseData);
+    if (parseData !== null) {
+      props.restoreCart(parseData);
+    }
   };
 
   const handleChange = (val) => {
@@ -99,7 +101,7 @@ function Dashboard(props) {
       });
   };
 
-  const debounceSearch = debounce(handleSearch, 1000);
+  const debounceSearch = debounce(handleSearch, 500);
 
   if (props.error) {
     return <Somethingwrong />;

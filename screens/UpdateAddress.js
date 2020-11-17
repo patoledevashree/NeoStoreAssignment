@@ -6,6 +6,7 @@ import {
   Button,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import Toast from 'react-native-simple-toast';
@@ -55,7 +56,19 @@ export default function UpdateAddress({route}) {
         setLoading(false);
       });
   };
-
+  const remove = (id) => {
+    Alert.alert('Delete Address', 'Do You want to delete Address', [
+      {
+        text: 'OK',
+        onPress: () => {
+          removeAddress(id);
+        },
+      },
+      {
+        text: 'Cancle',
+      },
+    ]);
+  };
   const removeAddress = (id) => {
     axios
       .delete(`${baseUrl}/deladdress/${id}`, {
@@ -132,7 +145,7 @@ export default function UpdateAddress({route}) {
                     <View style={styles.icon}>
                       <TouchableOpacity
                         onPress={() => {
-                          removeAddress(item.address_id);
+                          remove(item.address_id);
                         }}>
                         <FontAwesome
                           name="times"

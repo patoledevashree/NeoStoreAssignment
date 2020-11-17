@@ -58,9 +58,14 @@ function Product(props) {
 
   const getProducts = () => {
     let item;
-    props.route.params?.productId
-      ? (item = props.route.params?.productId)
-      : (item = selectedCategory);
+    if (selectedCategory.category_id) {
+      item = selectedCategory;
+    } else {
+      props.route.params?.productId
+        ? (item = props.route.params?.productId)
+        : (item = selectedCategory);
+    }
+
     axios
       .get(`${baseUrl}/commonProducts`, {
         params: {
@@ -127,6 +132,7 @@ function Product(props) {
         ? (categoryId = '')
         : (categoryId = selectedCategory.category_id);
     }
+
     setSelectedColor({
       color_id: '',
       color_name: '',
@@ -412,7 +418,7 @@ function Product(props) {
             onPress={() => {
               setCategory(true);
             }}>
-            <View style={{paddingVertical: 10, paddingLeft: 50}}>
+            <View style={{paddingVertical: 10, paddingLeft: 30}}>
               <FontAwesome
                 name="list-alt"
                 color={'black'}
@@ -462,7 +468,7 @@ function Product(props) {
               setPrice(true);
             }}>
             <View
-              style={{paddingVertical: 10, paddingLeft: 50, paddingRight: 50}}>
+              style={{paddingVertical: 10, paddingLeft: 50, paddingRight: 60}}>
               <FontAwesome
                 name="rupee-sign"
                 color={'black'}
@@ -529,6 +535,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e7e7e7',
     borderTopWidth: 1,
     bottom: 0,
+    width: '100%',
   },
   textHeadLeft: {
     color: 'white',

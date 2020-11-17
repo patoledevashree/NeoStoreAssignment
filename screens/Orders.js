@@ -14,79 +14,51 @@ import {baseUrl} from '../shared/config';
  * @returns JSX of Orders list
  */
 export default function Orders({route}) {
-  useEffect(() => {
-    getOrders();
-  }, []);
-  const [orderList, setOrder] = useState({});
-  const [loading, setLoading] = useState(true);
+  const orderList = route.params.orderList;
   const navigation = useNavigation();
-  const getOrders = () => {
-    axios
-      .get(`${baseUrl}/getOrderDetails`, {
-        headers: {Authorization: `bearer ${route.params.token}`},
-      })
-      .then((response) => {
-        // console.log(response);
-        setOrder(response.data.product_details);
-        setLoading(false);
-      })
-      .catch((error) => {
-        // console.log('error', error.response);
-        setLoading(false);
-      });
-  };
-  if (loading) {
-    return (
-      <LottieView
-        source={require('../assests/images/4383-circle-loader.json')}
-        autoPlay
-        loop
-      />
-    );
-  } else {
-    return (
-      <View style={styles.container}>
-        <ScrollView>
-          {orderList.map((item, index) => {
-            return (
-              <View key={index} style={styles.cardWrapper}>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('OrderDetail', {
-                      data: item.product_details,
-                      order_Id: item._id,
-                    });
-                  }}>
-                  <View style={styles.card}>
-                    <Text
-                      style={{
-                        fontSize: 18,
-                        paddingTop: 20,
-                        paddingLeft: 30,
-                        fontFamily: 'bold',
-                      }}>
-                      ID: {item._id}
-                    </Text>
-                    <Text
-                      style={{
-                        color: '#eb9800',
-                        fontSize: 18,
-                        textAlign: 'right',
-                        paddingRight: 80,
-                      }}>
-                      {'\u20B9'}
-                      {item.product_details[0].total_cartCost}
-                    </Text>
-                    <Time time={item.product_details[0].createdAt} />
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          })}
-        </ScrollView>
-      </View>
-    );
-  }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView>
+        {orderList.map((item, index) => {
+          return (
+            <View key={index} style={styles.cardWrapper}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('OrderDetail', {
+                    data: item.product_details,
+                    order_Id: item._id,
+                  });
+                }}>
+                <View style={styles.card}>
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      paddingTop: 20,
+                      paddingLeft: 30,
+                      fontFamily: 'bold',
+                    }}>
+                    ID: {item._id}
+                  </Text>
+                  <Text
+                    style={{
+                      color: '#eb9800',
+                      fontSize: 18,
+                      textAlign: 'right',
+                      paddingRight: 80,
+                    }}>
+                    {'\u20B9'}
+                    {item.product_details[0].total_cartCost}
+                  </Text>
+                  <Time time={item.product_details[0].createdAt} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

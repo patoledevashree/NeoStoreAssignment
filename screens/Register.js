@@ -21,8 +21,16 @@ import {baseUrl} from '../shared/config';
 import Somethingwrong from './Somethingwrong';
 
 const validationSchema = yup.object({
-  FirstName: yup.string().min(4).required(),
-  LastName: yup.string().min(4).required(),
+  FirstName: yup
+    .string()
+    .min(4)
+    .required()
+    .matches(/^[a-zA-Z]+$/, 'Must contains only alphabet'),
+  LastName: yup
+    .string()
+    .min(4)
+    .required()
+    .matches(/^[a-zA-Z]+$/, 'Must contains only alphabet'),
   Email: yup.string().email().required(),
   password: yup
     .string()
@@ -127,7 +135,7 @@ export default function Register() {
                     // console.log('response', response);
                     Toast.show('Registered Successfully');
                     navigation.navigate('Login');
-
+                    action.resetForm();
                     setLoading(false);
                   })
                   .catch((err) => {
@@ -351,11 +359,20 @@ export default function Register() {
                   );
                 } else {
                   return (
-                    <LottieView
-                      source={require('../assests/images/4383-circle-loader.json')}
-                      autoPlay
-                      loop
-                    />
+                    <View
+                      style={{
+                        paddingTop: 100,
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <LottieView
+                        source={require('../assests/images/4383-circle-loader.json')}
+                        autoPlay
+                        loop
+                        style={{width: 200, height: 200}}
+                      />
+                    </View>
                   );
                 }
               }}
@@ -369,9 +386,11 @@ export default function Register() {
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 60,
     paddingTop: 30,
     marginVertical: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
     borderRadius: 1,

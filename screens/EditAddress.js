@@ -212,7 +212,9 @@ export default function EditAddress({route}) {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
-    marginHorizontal: 50,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
     width: 300,

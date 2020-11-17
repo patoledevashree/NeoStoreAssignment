@@ -79,150 +79,166 @@ export default function ChangePassword({route}) {
     }
   };
 
-  if (loading) {
-    return (
-      <LottieView
-        source={require('../assests/images/4383-circle-loader.json')}
-        autoPlay
-        loop
-      />
-    );
-  } else {
-    return (
-      <View style={styles.container}>
-        <ScrollView>
-          <Formik
-            initialValues={{
-              oldPwd: '',
-              newPwd: '',
-              crfmPwd: '',
-            }}
-            validationSchema={validationSchema}
-            onSubmit={(values) => {
-              axios
-                .post(
-                  `${baseUrl}/changePassword`,
-                  {
-                    oldPass: values.oldPwd,
-                    newPass: values.newPwd,
-                    confirmPass: values.crfmPwd,
-                  },
-                  {headers: {Authorization: `bearer ${route.params.token}`}},
-                )
-                .then((response) => {
-                  Toast.show(response.data.message);
-                  navigation.goBack();
-                })
-                .catch((error) => {
-                  Toast.show(error.response.data.message);
-                });
-            }}>
-            {(props) => (
-              <View style={{marginTop: 30}}>
-                <View>
-                  <FontAwesome
-                    name="key"
-                    size={25}
-                    color={'#777'}
-                    style={styles.icon}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    secureTextEntry={secureOldPwd}
-                    placeholder="Current Password"
-                    onChangeText={props.handleChange('oldPwd')}
-                    value={props.values.oldPwd}
-                    onBlur={props.handleBlur('oldPwd')}
-                  />
-                  <FontAwesome
-                    style={{position: 'absolute', top: 40, right: 20}}
-                    name={old_eyeStyle}
-                    size={20}
-                    onPress={handleOldClick}
-                  />
-                  {props.touched.oldPwd && props.errors.oldPwd && (
-                    <Text style={styles.error}>
-                      {props.touched.oldPwd && props.errors.oldPwd}
-                    </Text>
-                  )}
-                </View>
+  return (
+    <View style={styles.container}>
+      <ScrollView>
+        <Formik
+          initialValues={{
+            oldPwd: '',
+            newPwd: '',
+            crfmPwd: '',
+          }}
+          validationSchema={validationSchema}
+          onSubmit={(values) => {
+            setLoading(true);
+            axios
+              .post(
+                `${baseUrl}/changePassword`,
+                {
+                  oldPass: values.oldPwd,
+                  newPass: values.newPwd,
+                  confirmPass: values.crfmPwd,
+                },
+                {headers: {Authorization: `bearer ${route.params.token}`}},
+              )
+              .then((response) => {
+                Toast.show(response.data.message);
+                setLoading(false);
+                navigation.goBack();
+              })
+              .catch((error) => {
+                setLoading(false);
+                Toast.show(error.response.data.message);
+              });
+          }}>
+          {(props) => {
+            if (loading === false) {
+              return (
+                <View style={{marginTop: 30}}>
+                  <View>
+                    <FontAwesome
+                      name="key"
+                      size={25}
+                      color={'#777'}
+                      style={styles.icon}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      secureTextEntry={secureOldPwd}
+                      placeholder="Current Password"
+                      onChangeText={props.handleChange('oldPwd')}
+                      value={props.values.oldPwd}
+                      onBlur={props.handleBlur('oldPwd')}
+                    />
+                    <FontAwesome
+                      style={{position: 'absolute', top: 40, right: 20}}
+                      name={old_eyeStyle}
+                      size={20}
+                      onPress={handleOldClick}
+                    />
+                    {props.touched.oldPwd && props.errors.oldPwd && (
+                      <Text style={styles.error}>
+                        {props.touched.oldPwd && props.errors.oldPwd}
+                      </Text>
+                    )}
+                  </View>
 
-                <View>
-                  <FontAwesome
-                    name="key"
-                    size={25}
-                    color={'#777'}
-                    style={styles.icon}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    secureTextEntry={securePwd}
-                    placeholder="New Password"
-                    onChangeText={props.handleChange('newPwd')}
-                    value={props.values.newPwd}
-                    onBlur={props.handleBlur('newPwd')}
-                  />
-                  <FontAwesome
-                    style={{position: 'absolute', top: 40, right: 20}}
-                    name={pwd_eyeStyle}
-                    size={20}
-                    onPress={handlePwdClick}
-                  />
-                  {props.touched.newPwd && props.errors.newPwd && (
-                    <Text style={styles.error}>
-                      {props.touched.newPwd && props.errors.newPwd}
-                    </Text>
-                  )}
-                </View>
+                  <View>
+                    <FontAwesome
+                      name="key"
+                      size={25}
+                      color={'#777'}
+                      style={styles.icon}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      secureTextEntry={securePwd}
+                      placeholder="New Password"
+                      onChangeText={props.handleChange('newPwd')}
+                      value={props.values.newPwd}
+                      onBlur={props.handleBlur('newPwd')}
+                    />
+                    <FontAwesome
+                      style={{position: 'absolute', top: 40, right: 20}}
+                      name={pwd_eyeStyle}
+                      size={20}
+                      onPress={handlePwdClick}
+                    />
+                    {props.touched.newPwd && props.errors.newPwd && (
+                      <Text style={styles.error}>
+                        {props.touched.newPwd && props.errors.newPwd}
+                      </Text>
+                    )}
+                  </View>
 
-                <View>
-                  <FontAwesome
-                    name="key"
-                    size={25}
-                    color={'#777'}
-                    style={styles.icon}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    secureTextEntry={secureCrfm}
-                    placeholder="Confirm Password"
-                    onChangeText={props.handleChange('crfmPwd')}
-                    value={props.values.crfmPwd}
-                    onBlur={props.handleBlur('crfmPwd')}
-                  />
-                  <FontAwesome
-                    style={{position: 'absolute', top: 40, right: 20}}
-                    name={crf_eyeStyle}
-                    size={20}
-                    onPress={handleClick}
-                  />
-                  {props.touched.crfmPwd && props.errors.crfmPwd && (
-                    <Text style={styles.error}>
-                      {props.touched.crfmPwd && props.errors.crfmPwd}
-                    </Text>
-                  )}
-                </View>
+                  <View>
+                    <FontAwesome
+                      name="key"
+                      size={25}
+                      color={'#777'}
+                      style={styles.icon}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      secureTextEntry={secureCrfm}
+                      placeholder="Confirm Password"
+                      onChangeText={props.handleChange('crfmPwd')}
+                      value={props.values.crfmPwd}
+                      onBlur={props.handleBlur('crfmPwd')}
+                    />
+                    <FontAwesome
+                      style={{position: 'absolute', top: 40, right: 20}}
+                      name={crf_eyeStyle}
+                      size={20}
+                      onPress={handleClick}
+                    />
+                    {props.touched.crfmPwd && props.errors.crfmPwd && (
+                      <Text style={styles.error}>
+                        {props.touched.crfmPwd && props.errors.crfmPwd}
+                      </Text>
+                    )}
+                  </View>
 
-                <View style={{borderRadius: 10, marginTop: 20, width: 300}}>
-                  <Button
-                    title="Change Password"
-                    color={'#2874F0'}
-                    onPress={props.handleSubmit}
+                  <View style={{borderRadius: 10, marginTop: 20, width: 300}}>
+                    <Button
+                      title="Change Password"
+                      color={'#2874F0'}
+                      onPress={props.handleSubmit}
+                    />
+                  </View>
+                </View>
+              );
+            } else {
+              return (
+                <View
+                  style={{
+                    paddingTop: 100,
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <LottieView
+                    source={require('../assests/images/4383-circle-loader.json')}
+                    autoPlay
+                    loop
+                    style={{width: 200, height: 200}}
                   />
                 </View>
-              </View>
-            )}
-          </Formik>
-        </ScrollView>
-      </View>
-    );
-  }
+              );
+            }
+          }}
+        </Formik>
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
-    marginHorizontal: 50,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
     width: 300,

@@ -8,10 +8,12 @@ import {
   INCREAMENT_QUANTITY,
   DECREMENT_QUANTITY,
   RESTORE_CART,
+  GET_ORDER,
 } from './types';
 import axios from 'axios';
 import Toast from 'react-native-simple-toast';
 import {baseUrl} from '../../shared/config';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const cartDataRequest = () => {
   return {
@@ -71,6 +73,13 @@ export const restoreCart = (cart) => {
   return {
     type: RESTORE_CART,
     data: cart,
+  };
+};
+
+export const order = (order) => {
+  return {
+    type: GET_ORDER,
+    data: order,
   };
 };
 
@@ -199,6 +208,31 @@ export const orderProduct = (cartItem, token) => {
       })
       .then((response) => {
         dispatch(emptyCart());
+        removeCart();
+      })
+      .catch((error) => {
+        // console.log('error', error.response);
+      });
+  };
+};
+
+/**
+ * @author Devashree Patole
+ * @description Removes data from local storage
+ */
+export const removeCart = async () => {
+  await AsyncStorage.removeItem('cartData');
+};
+
+export const getOrders = (token) => {
+  return (dispatch) => {
+    axios
+      .get(`${baseUrl}/getOrderDetails`, {
+        headers: {Authorization: `bearer ${token}`},
+      })
+      .then((response) => {
+        const orders = response.data.product_details;
+        dispatch(order(orders));
       })
       .catch((error) => {
         // console.log('error', error.response);

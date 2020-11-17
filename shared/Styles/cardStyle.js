@@ -40,7 +40,7 @@ export const cardStyles = StyleSheet.create({
   },
   cardTitle: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
   },
   cardDetail: {
     fontSize: 18,

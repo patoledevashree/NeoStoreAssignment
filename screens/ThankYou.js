@@ -1,15 +1,23 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, Button} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
+import {connect} from 'react-redux';
+import {getOrders} from '../redux/action/CartAction';
 
 /**
  * @author Devashree Patole
  * @description This screen is displayed when user placed order
  * @returns JSX of Thank You screen
  */
-export default function ThankYou() {
+function ThankYou(props) {
   const navigation = useNavigation();
+  useEffect(() => {
+    if (props.userData.data.token) {
+      props.getOrders(props.userData.data.token);
+    }
+  }, [props.userData]);
+
   return (
     <View style={{marginVertical: 50}}>
       <View style={{marginHorizontal: 50, marginTop: 50}}>
@@ -34,3 +42,16 @@ export default function ThankYou() {
     </View>
   );
 }
+
+export const mapStateToProps = (state) => {
+  return {
+    userData: state.loginReducer.user,
+  };
+};
+export const mapDispatchToProps = (dispatch) => {
+  return {
+    getOrders: (token) => dispatch(getOrders(token)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ThankYou);

@@ -252,6 +252,9 @@ const styles = StyleSheet.create({
     marginLeft: 80,
     borderWidth: 1,
     borderColor: '#2874F0',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   footer: {
     flexDirection: 'row',

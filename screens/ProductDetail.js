@@ -22,6 +22,7 @@ import {checkCart} from '../redux/action/CartAction';
 import Share from 'react-native-share';
 import {baseUrl} from '../shared/config';
 import ImgToBase64 from 'react-native-image-base64';
+import Somethingwrong from './Somethingwrong';
 
 /**
  * @author Devashree Patole
@@ -72,6 +73,10 @@ function ProductDetail(props) {
       // console.log('error', error);
     }
   };
+  if (props.error) {
+    return <Somethingwrong />;
+  }
+
   if (props.loading) {
     return (
       <LottieView
@@ -82,197 +87,196 @@ function ProductDetail(props) {
     );
   } else {
     return (
-      <View>
+      <View style={{flex: 1}}>
         <ScrollView>
-          <View style={styles.container}>
-            <View style={styles.sliderContainer}>
-              <Swiper>
-                {props.product?.subImages_id?.product_subImages.map(
-                  (item, index) => {
-                    return (
-                      <View key={index} style={styles.slide}>
-                        <Image
-                          source={{
-                            uri: `${baseUrl}/${item}`,
-                          }}
-                          resizeMode="cover"
-                          style={styles.sliderImage}
-                        />
-                      </View>
-                    );
-                  },
-                )}
-              </Swiper>
-            </View>
-          </View>
-          <View style={{marginLeft: 20}}>
-            <View>
-              <Text
-                style={{
-                  fontSize: 25,
-                  fontWeight: 'bold',
-                }}>
-                {productDetail.product_name}
-              </Text>
-
-              <Text
-                style={{
-                  fontSize: 18,
-                }}>
-                {productDetail.category_id?.category_name}
-              </Text>
-
-              <Text
-                style={{
-                  color: '#eb9800',
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  marginTop: 5,
-                }}>
-                {'\u20B9'}
-                {productDetail.product_cost}
-              </Text>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'flex-start',
-                  marginTop: 5,
-                }}>
-                <Rating
-                  count={5}
-                  startingValue={Number(productDetail.product_rating)}
-                  imageSize={20}
-                  readonly={true}
-                  type={'custom'}
-                  tintColor="white"
-                />
+          <View style={{marginBottom: 80}}>
+            <View style={styles.container}>
+              <View style={styles.sliderContainer}>
+                <Swiper>
+                  {props.product?.subImages_id?.product_subImages.map(
+                    (item, index) => {
+                      return (
+                        <View key={index} style={styles.slide}>
+                          <Image
+                            source={{
+                              uri: `${baseUrl}/${item}`,
+                            }}
+                            resizeMode="cover"
+                            style={styles.sliderImage}
+                          />
+                        </View>
+                      );
+                    },
+                  )}
+                </Swiper>
               </View>
-
-              <Text
-                style={{
-                  fontSize: 18,
-                  marginTop: 5,
-                }}>
-                Product By: {productDetail.product_producer}
-              </Text>
-              <Text style={{fontSize: 18, marginTop: 5}}>
-                Status :{' '}
-                {productDetail.product_stock !== 0 ? (
-                  <Text style={{color: 'green'}}>In Stock</Text>
-                ) : (
-                  <Text style={{color: 'red'}}>Out Of Stock</Text>
-                )}
-              </Text>
             </View>
-            <FontAwesome
-              name="share-alt"
-              size={30}
-              style={{
-                position: 'absolute',
-                right: 30,
-                top: 35,
-                height: 50,
-                width: 50,
-                borderWidth: 1,
-                paddingLeft: 8,
-                paddingTop: 10,
-                borderRadius: 50,
-              }}
-              color={'#777'}
-              onPress={() => {
-                shareProduct();
-              }}
-            />
-            <View>
-              <Text
-                style={{
-                  fontWeight: 'bold',
-                  fontSize: 20,
-                  marginTop: 7,
-                }}>
-                Description:
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  marginTop: 10,
-                }}>
-                {productDetail.product_desc}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  marginTop: 10,
-                }}>
-                <Text style={{fontWeight: 'bold', fontSize: 20}}>
-                  Dimension :
-                </Text>{' '}
-                {productDetail.product_dimension}
-              </Text>
-            </View>
-          </View>
+            <View style={{marginLeft: 20}}>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 25,
+                    fontWeight: 'bold',
+                  }}>
+                  {productDetail.product_name}
+                </Text>
 
-          <View style={styles.icon}>
-            <TouchableOpacity
-              onPress={() => {
-                if (productDetail.product_stock !== 0) {
-                  addCart();
-                } else {
-                  Toast.show('Product Out Of Stock');
-                }
-              }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                  }}>
+                  {productDetail.category_id?.category_name}
+                </Text>
+
+                <Text
+                  style={{
+                    color: '#eb9800',
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                    marginTop: 5,
+                  }}>
+                  {'\u20B9'}
+                  {productDetail.product_cost}
+                </Text>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    marginTop: 5,
+                  }}>
+                  <Rating
+                    count={5}
+                    startingValue={Number(productDetail.product_rating)}
+                    imageSize={20}
+                    readonly={true}
+                    type={'custom'}
+                    tintColor="white"
+                  />
+                </View>
+
+                <Text
+                  style={{
+                    fontSize: 18,
+                    marginTop: 5,
+                  }}>
+                  Product By: {productDetail.product_producer}
+                </Text>
+                <Text style={{fontSize: 18, marginTop: 5}}>
+                  Status :{' '}
+                  {productDetail.product_stock !== 0 ? (
+                    <Text style={{color: 'green'}}>In Stock</Text>
+                  ) : (
+                    <Text style={{color: 'red'}}>Out Of Stock</Text>
+                  )}
+                </Text>
+              </View>
               <FontAwesome
-                name="shopping-cart"
+                name="share-alt"
                 size={30}
-                color={'white'}
-                style={{padding: 15}}
+                style={{
+                  position: 'absolute',
+                  right: 30,
+                  top: 35,
+                  height: 50,
+                  width: 50,
+                  borderWidth: 1,
+                  paddingLeft: 8,
+                  paddingTop: 10,
+                  borderRadius: 50,
+                }}
+                color={'#777'}
+                onPress={() => {
+                  shareProduct();
+                }}
               />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.footer}>
-            <View
-              style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
-              <View style={styles.button}>
-                <Button
-                  title="Shop Now"
-                  onPress={() => {
-                    if (props.userData.length === 0) {
-                      Alert.alert('You are not Logged In');
-                      navigation.navigate('Login');
-                    } else {
-                      navigation.navigate('OrderSummary', {
-                        total: '',
-                        product: productDetail,
-                      });
-                    }
-                  }}
-                />
-              </View>
-              <View style={styles.button}>
-                <Button
-                  title="Rate"
-                  color={'#eb9800'}
-                  onPress={() => {
-                    if (props.userData.length === 0) {
-                      Alert.alert('You are not Logged In');
-                      navigation.navigate('Login');
-                    } else {
-                      setrating(true);
-                    }
-                  }}
-                />
+              <View>
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: 20,
+                    marginTop: 7,
+                  }}>
+                  Description:
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    marginTop: 10,
+                  }}>
+                  {productDetail.product_desc}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    marginTop: 10,
+                  }}>
+                  <Text style={{fontWeight: 'bold', fontSize: 20}}>
+                    Dimension :
+                  </Text>{' '}
+                  {productDetail.product_dimension}
+                </Text>
               </View>
             </View>
           </View>
-          <RatingModal
-            visible={rate}
-            closeModal={closeModal}
-            token={props.userData?.data?.token}
-            productId={productDetail.product_id}
-          />
         </ScrollView>
+        <View style={styles.icon}>
+          <TouchableOpacity
+            onPress={() => {
+              if (productDetail.product_stock !== 0) {
+                addCart();
+              } else {
+                Toast.show('Product Out Of Stock');
+              }
+            }}>
+            <FontAwesome
+              name="shopping-cart"
+              size={30}
+              color={'white'}
+              style={{padding: 15}}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.footer}>
+          <View style={{flexDirection: 'row', marginTop: 10, marginBottom: 10}}>
+            <View style={styles.button}>
+              <Button
+                title="Shop Now"
+                onPress={() => {
+                  if (props.userData.length === 0) {
+                    Alert.alert('You are not Logged In');
+                    navigation.navigate('Login');
+                  } else {
+                    navigation.navigate('OrderSummary', {
+                      total: '',
+                      product: productDetail,
+                    });
+                  }
+                }}
+              />
+            </View>
+            <View style={{...styles.button, paddingRight: 10}}>
+              <Button
+                title="Rate"
+                color={'#eb9800'}
+                onPress={() => {
+                  if (props.userData.length === 0) {
+                    Alert.alert('You are not Logged In');
+                    navigation.navigate('Login');
+                  } else {
+                    setrating(true);
+                  }
+                }}
+              />
+            </View>
+          </View>
+        </View>
+        <RatingModal
+          visible={rate}
+          closeModal={closeModal}
+          token={props.userData?.data?.token}
+          productId={productDetail.product_id}
+        />
       </View>
     );
   }
@@ -284,6 +288,7 @@ const mapStateToProps = (state) => {
     loading: state.productReducer.isLoading,
     userData: state.loginReducer.user,
     cartData: state.cartReducer.cartData,
+    error: state.productReducer.error,
   };
 };
 
@@ -325,16 +330,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
     borderTopColor: '#777',
-    position: 'relative',
+    position: 'absolute',
     shadowColor: '#777',
     justifyContent: 'space-around',
-    marginTop: 22,
+    // marginTop: 22,
     borderTopWidth: 1,
+    bottom: 0,
+    zIndex: 1,
+    backgroundColor: 'white',
+    width: '100%',
   },
   button: {
     width: 150,
     height: 40,
-    marginLeft: 35,
+    marginLeft: 30,
     borderRadius: 5,
   },
   icon: {

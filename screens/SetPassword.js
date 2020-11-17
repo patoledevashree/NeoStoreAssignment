@@ -65,154 +65,170 @@ export default function ForgetPassword({route}) {
       setCrfmIcon('eye-slash');
     }
   };
-  if (loading) {
-    return (
-      <LottieView
-        source={require('../assests/images/4383-circle-loader.json')}
-        autoPlay
-        loop
-      />
-    );
-  } else {
-    return (
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-        }}>
-        <ScrollView>
-          <View style={styles.container}>
-            <Text style={styles.text}>
-              Neo<Text style={{color: '#2874F0'}}>Store</Text>
-            </Text>
-            <Formik
-              initialValues={{
-                otp: '',
-                password: '',
-                confirmPwd: '',
-              }}
-              validationSchema={validationschema}
-              onSubmit={(values) => {
-                axios
-                  .post(
-                    `${baseUrl}/recoverPassword`,
-                    {
-                      otpCode: values.otp,
-                      newPass: values.password,
-                      confirmPass: values.confirmPwd,
-                    },
-                    {
-                      headers: {Authorization: `bearer ${token}`},
-                    },
-                  )
-                  .then((response) => {
-                    Toast.show(response.data.message);
-                    navigation.navigate('Login');
-                  })
-                  .catch((error) => {
-                    // console.log('error', error, error.response);
-                    Toast.show(error.response.data.message);
-                  });
-              }}>
-              {(props) => (
-                <View>
+  return (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}>
+      <ScrollView>
+        <View style={styles.container}>
+          <Text style={styles.text}>
+            Neo<Text style={{color: '#2874F0'}}>Store</Text>
+          </Text>
+          <Formik
+            initialValues={{
+              otp: '',
+              password: '',
+              confirmPwd: '',
+            }}
+            validationSchema={validationschema}
+            onSubmit={(values) => {
+              setLoading(true);
+              axios
+                .post(
+                  `${baseUrl}/recoverPassword`,
+                  {
+                    otpCode: values.otp,
+                    newPass: values.password,
+                    confirmPass: values.confirmPwd,
+                  },
+                  {
+                    headers: {Authorization: `bearer ${token}`},
+                  },
+                )
+                .then((response) => {
+                  Toast.show(response.data.message);
+                  setLoading(false);
+                  navigation.navigate('Login');
+                })
+                .catch((error) => {
+                  // console.log('error', error, error.response);
+                  Toast.show(error.response.data.message);
+                  setLoading(false);
+                });
+            }}>
+            {(props) => {
+              if (loading === false) {
+                return (
                   <View>
-                    <FontAwesome
-                      style={{position: 'relative', top: 35, left: 15}}
-                      name="key"
-                      size={20}
-                    />
+                    <View>
+                      <FontAwesome
+                        style={{position: 'relative', top: 35, left: 15}}
+                        name="key"
+                        size={20}
+                      />
 
-                    <TextInput
-                      style={styles.input}
-                      keyboardType="numeric"
-                      placeholder="Enter OTP"
-                      onChangeText={props.handleChange('otp')}
-                      value={props.values.otp}
-                      onBlur={props.handleBlur('otp')}
-                    />
-                    <Text style={styles.error}>
-                      {props.touched.otp && props.errors.otp}
-                    </Text>
-                  </View>
-                  <View>
-                    <FontAwesome
-                      style={{position: 'relative', top: 35, left: 15}}
-                      name="lock"
-                      size={20}
-                    />
-
-                    <TextInput
-                      style={styles.input}
-                      placeholder="New Password"
-                      secureTextEntry={securePwd}
-                      onChangeText={props.handleChange('password')}
-                      value={props.values.password}
-                      onBlur={props.handleBlur('password')}
-                    />
-                    <FontAwesome
-                      style={{position: 'absolute', top: 35, right: 5}}
-                      name={pwd_eyeStyle}
-                      size={20}
-                      onPress={handlePwdClick}
-                    />
-                    <Text style={styles.error}>
-                      {props.touched.password && props.errors.password}
-                    </Text>
-                  </View>
-
-                  <View>
-                    <FontAwesome
-                      style={{position: 'relative', top: 35, left: 15}}
-                      name="lock"
-                      size={20}
-                    />
-
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Confirm Password"
-                      secureTextEntry={secureCrfm}
-                      onChangeText={props.handleChange('confirmPwd')}
-                      value={props.values.confirmPwd}
-                      onBlur={props.handleBlur('confirmPwd')}
-                    />
-                    <FontAwesome
-                      style={{position: 'absolute', top: 35, right: 5}}
-                      name={crf_eyeStyle}
-                      size={20}
-                      onPress={handleClick}
-                    />
-                    <Text style={styles.error}>
-                      {props.touched.confirmPwd && props.errors.confirmPwd}
-                    </Text>
-                  </View>
-                  <TouchableOpacity onPress={props.handleSubmit}>
-                    <View style={styles.button}>
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: 20,
-                          textAlign: 'center',
-                          padding: 5,
-                        }}>
-                        Submit
+                      <TextInput
+                        style={styles.input}
+                        keyboardType="numeric"
+                        placeholder="Enter OTP"
+                        onChangeText={props.handleChange('otp')}
+                        value={props.values.otp}
+                        onBlur={props.handleBlur('otp')}
+                      />
+                      <Text style={styles.error}>
+                        {props.touched.otp && props.errors.otp}
                       </Text>
                     </View>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </Formik>
-          </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    );
-  }
+                    <View>
+                      <FontAwesome
+                        style={{position: 'relative', top: 35, left: 15}}
+                        name="lock"
+                        size={20}
+                      />
+
+                      <TextInput
+                        style={styles.input}
+                        placeholder="New Password"
+                        secureTextEntry={securePwd}
+                        onChangeText={props.handleChange('password')}
+                        value={props.values.password}
+                        onBlur={props.handleBlur('password')}
+                      />
+                      <FontAwesome
+                        style={{position: 'absolute', top: 35, right: 5}}
+                        name={pwd_eyeStyle}
+                        size={20}
+                        onPress={handlePwdClick}
+                      />
+                      <Text style={styles.error}>
+                        {props.touched.password && props.errors.password}
+                      </Text>
+                    </View>
+
+                    <View>
+                      <FontAwesome
+                        style={{position: 'relative', top: 35, left: 15}}
+                        name="lock"
+                        size={20}
+                      />
+
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Confirm Password"
+                        secureTextEntry={secureCrfm}
+                        onChangeText={props.handleChange('confirmPwd')}
+                        value={props.values.confirmPwd}
+                        onBlur={props.handleBlur('confirmPwd')}
+                      />
+                      <FontAwesome
+                        style={{position: 'absolute', top: 35, right: 5}}
+                        name={crf_eyeStyle}
+                        size={20}
+                        onPress={handleClick}
+                      />
+                      <Text style={styles.error}>
+                        {props.touched.confirmPwd && props.errors.confirmPwd}
+                      </Text>
+                    </View>
+                    <TouchableOpacity onPress={props.handleSubmit}>
+                      <View style={styles.button}>
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: 20,
+                            textAlign: 'center',
+                            padding: 5,
+                          }}>
+                          Submit
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                );
+              } else {
+                return (
+                  <View
+                    style={{
+                      paddingTop: 100,
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <LottieView
+                      source={require('../assests/images/4383-circle-loader.json')}
+                      autoPlay
+                      loop
+                      style={{width: 200, height: 200}}
+                    />
+                  </View>
+                );
+              }
+            }}
+          </Formik>
+        </View>
+      </ScrollView>
+    </TouchableWithoutFeedback>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 60,
     paddingTop: 30,
     marginVertical: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     fontSize: 40,

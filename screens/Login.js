@@ -17,6 +17,7 @@ import {login} from '../redux/action/LoginAction';
 import {getCartData} from '../redux/action/CartAction';
 import LottieView from 'lottie-react-native';
 import Somethingwrong from './Somethingwrong';
+import {useFocusEffect} from '@react-navigation/native';
 
 const validationSchema = yup.object({
   email: yup.string().email().required(),
@@ -41,11 +42,17 @@ function Login({userData, login, getCartData, loading, error}) {
       navigation.navigate('Dashboard');
     }
   }, [userData]);
+  useFocusEffect(() => {
+    setKey(1);
+    return () => {
+      setKey(2);
+    };
+  }, []);
   const navigation = useNavigation();
 
   const [displayPassword, setPassword] = useState(true);
   const [eye_icon, setIcon] = useState('eye-slash');
-
+  const [uniqueKey, setKey] = useState(1);
   const handleClick = () => {
     setPassword(!displayPassword);
     if (eye_icon === 'eye-slash') {
@@ -71,6 +78,7 @@ function Login({userData, login, getCartData, loading, error}) {
   } else {
     return (
       <TouchableWithoutFeedback
+        key={uniqueKey}
         onPress={() => {
           Keyboard.dismiss();
         }}>

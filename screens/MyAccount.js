@@ -8,6 +8,7 @@ import axios from 'axios';
 import LottieView from 'lottie-react-native';
 import {baseUrl} from '../shared/config';
 import Somethingwrong from './Somethingwrong';
+import {getOrders} from '../redux/action/CartAction';
 
 /**
  * @author Devashree Patole
@@ -18,9 +19,29 @@ import Somethingwrong from './Somethingwrong';
  * @returns JSX of Myaccount screen
  */
 function MyAccount(props) {
+  useEffect(() => {
+    if (props.userData?.data?.token) {
+      props.getOrders(props.userData.data.token);
+    }
+  }, [props.userData]);
   const navigation = useNavigation();
   const [loading, setloading] = useState(false);
 
+  // const getOrders = () => {
+  //   axios
+  //     .get(`${baseUrl}/getOrderDetails`, {
+  //       headers: {Authorization: `bearer ${props.userData.data.token}`},
+  //     })
+  //     .then((response) => {
+  //       // console.log(response);
+  //       setOrder(response.data.product_details);
+  //       setloading(false);
+  //     })
+  //     .catch((error) => {
+  //       // console.log('error', error.response);
+  //       setloading(false);
+  //     });
+  // };
   if (props.error) {
     return <Somethingwrong />;
   }
@@ -34,7 +55,7 @@ function MyAccount(props) {
     );
   } else {
     return (
-      <View>
+      <View style={{flex: 1}}>
         <View style={{flexDirection: 'row'}}>
           {props.userData?.data?.customer_details.profile_img ? (
             <Image
@@ -65,7 +86,7 @@ function MyAccount(props) {
           </View>
         </View>
 
-        <View>
+        <View style={{borderBottomWidth: 1, paddingBottom: 20}}>
           <View style={{marginLeft: 30, marginTop: 20, flexDirection: 'row'}}>
             <FontAwesome name="phone-alt" size={20} color={'black'} />
             <Text style={{fontSize: 18, marginLeft: 20}}>
@@ -80,27 +101,25 @@ function MyAccount(props) {
           </View>
         </View>
 
-        <View style={{flexDirection: 'row', marginTop: 20}}>
+        <View style={{flexDirection: 'row', height: 70, width: '100%'}}>
           <View
             style={{
-              borderTopWidth: 1,
               borderRightWidth: 1,
+              width: '50%',
             }}>
-            <View style={styles.content}>
+            <View style={{...styles.content}}>
               <Text style={styles.contentText}>{'\u20B9'} 0</Text>
               <Text style={styles.contentText}> Wallet</Text>
             </View>
           </View>
           <View
             style={{
-              borderTopWidth: 1,
+              width: '50%',
             }}>
-            <View style={styles.content}>
-              <Text style={styles.contentText}>
-                {' '}
-                {props.userData?.data?.orders_shipped +
-                  props.userData?.data?.orders_onTheWay}
-              </Text>
+            <View
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              {console.log(props.order)}
+              <Text style={styles.contentText}>{props.order.length}</Text>
               <Text style={styles.contentText}>Orders</Text>
             </View>
           </View>
@@ -109,7 +128,7 @@ function MyAccount(props) {
         <View style={{borderTopWidth: 1}}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Orders', {token: props.userData.data.token});
+              navigation.navigate('Orders', {orderList: orderList});
             }}>
             <View style={styles.action}>
               <View style={styles.icon}>
@@ -204,13 +223,25 @@ const mapStateToProps = (state) => {
   return {
     userData: state.loginReducer.user,
     error: state.dashboardReducer.error,
+    order: state.cartReducer.order,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getOrders: (token) => dispatch(getOrders(token)),
   };
 };
 
 const styles = StyleSheet.create({
   content: {
     marginVertical: 15,
-    marginHorizontal: 80,
+    // marginHorizontal: 80,
+    flex: 1,
+    justifyContent: 'center',
+    // marginLeft: 80,
+    marginRight: 50,
+    alignItems: 'center',
   },
   contentText: {
     fontSize: 18,
@@ -228,4 +259,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(MyAccount);
+export default connect(mapStateToProps, mapDispatchToProps)(MyAccount);

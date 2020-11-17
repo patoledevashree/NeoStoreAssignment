@@ -130,7 +130,6 @@ function OrderDetail({route, userData}) {
                   textAlign: 'center',
                   color: 'white',
                   fontSize: 18,
-                  paddingTop: 10,
                 }}>
                 Download Invoice As Pdf
               </Text>

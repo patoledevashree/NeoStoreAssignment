@@ -78,6 +78,9 @@ export default function RatingModal({visible, closeModal, token, productId}) {
                   }}
                   defaultRating={0}
                   size={30}
+                  starStyle={{
+                    backgroundColor: '#F2F2F2',
+                  }}
                 />
               </View>
             </View>

@@ -6,6 +6,7 @@ import LottieView from 'lottie-react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import {baseUrl} from '../shared/config';
+import Toast from 'react-native-simple-toast';
 
 /**
  * @author Devashree Patole
@@ -40,6 +41,7 @@ export default function SelectAddress({route}) {
           setAddress([]);
           Toast.show(error.response.data.message);
         }
+
         setLoading(false);
       });
   };

@@ -94,9 +94,9 @@ function ProfileEdit(props) {
         onPress={() => {
           Keyboard.dismiss();
         }}>
-        <View style={styles.container}>
-          <ScrollView>
-            <View style={{marginTop: 20, marginHorizontal: 120}}>
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={{marginTop: 20, marginHorizontal: 80}}>
               <TouchableOpacity
                 onPress={() => {
                   handelPhoto();
@@ -109,9 +109,13 @@ function ProfileEdit(props) {
                         width: 100,
                         borderRadius: 50,
                       }}
-                      source={{
-                        uri: `${baseUrl}/${user.profile_img}`,
-                      }}
+                      source={
+                        user.profile_img
+                          ? {
+                              uri: `${baseUrl}/${user.profile_img}`,
+                            }
+                          : require('../assests/images/avtar.png')
+                      }
                     />
                   ) : (
                     <Avatar.Image
@@ -289,8 +293,8 @@ function ProfileEdit(props) {
                 </View>
               )}
             </Formik>
-          </ScrollView>
-        </View>
+          </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     );
   }
@@ -312,10 +316,16 @@ const mapDispatchToProps = (dispatch) => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   form: {
-    marginHorizontal: 30,
+    // marginHorizontal: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 20,
   },
   input: {

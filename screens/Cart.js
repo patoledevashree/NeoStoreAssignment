@@ -66,7 +66,7 @@ function Cart(props) {
     return <Somethingwrong />;
   }
 
-  if (props.cartData?.length === 0) {
+  if (props.cartData?.length === 0 || props.cartData === null) {
     return (
       <View style={{marginVertical: 20}}>
         <FontAwesome
@@ -74,8 +74,11 @@ function Cart(props) {
           size={200}
           color={'#e7e7e7'}
           style={{
-            marginHorizontal: 100,
+            marginLeft: 80,
             marginVertical: 10,
+            // flex: 1,
+            // justifyContent: 'center',
+            // alignItems: 'center',
           }}
         />
         <Text
@@ -91,8 +94,8 @@ function Cart(props) {
   } else {
     return (
       <View style={{flex: 1}}>
-        <View style={styles.container}>
-          <ScrollView>
+        <ScrollView>
+          <View style={styles.container}>
             {props.cartData?.map((item, index) => {
               return (
                 <View key={index}>
@@ -113,7 +116,11 @@ function Cart(props) {
                       <Text style={cardStyles.cardDetail}>
                         Quantity : {item.quantity}
                       </Text>
-                      <View style={{flexDirection: 'row'}}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
                         <View>
                           <Text
                             style={{
@@ -124,7 +131,7 @@ function Cart(props) {
                             {item.total_productCost}
                           </Text>
                         </View>
-                        <View style={{flexDirection: 'row', left: 50}}>
+                        <View style={{flexDirection: 'row'}}>
                           <TouchableOpacity
                             onPress={() => {
                               if (
@@ -204,8 +211,8 @@ function Cart(props) {
                 </Text>
               </View>
             </View>
-          </ScrollView>
-        </View>
+          </View>
+        </ScrollView>
         <View style={styles.footer}>
           <View>
             <Text style={{fontSize: 22, paddingLeft: 30, fontWeight: 'bold'}}>
@@ -216,9 +223,14 @@ function Cart(props) {
             <Button
               title="Place Order"
               onPress={() => {
-                navigation.navigate('OrderSummary', {
-                  total: total,
-                });
+                if (props.userData?.data?.token) {
+                  navigation.navigate('OrderSummary', {
+                    total: total,
+                  });
+                } else {
+                  Alert.alert('You Are not Logged In');
+                  navigation.navigate('Login');
+                }
               }}
             />
           </View>
@@ -253,8 +265,8 @@ const styles = StyleSheet.create({
   },
 
   countButton: {
-    height: 30,
-    width: 30,
+    height: 28,
+    width: 28,
     borderWidth: 1,
     fontSize: 22,
     color: '#444',
@@ -269,10 +281,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#e7e7e7',
   },
   button: {
-    width: 200,
+    width: 300,
     height: 30,
     borderRadius: 2,
-    marginLeft: 80,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   footer: {
     flexDirection: 'row',
@@ -283,6 +297,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     backgroundColor: 'white',
     paddingVertical: 10,
+    width: '100%',
   },
 });
 

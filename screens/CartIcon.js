@@ -26,7 +26,7 @@ function CartIcon(props) {
           height: 20,
         }}>
         <Text style={{color: 'white', textAlign: 'center'}}>
-          {props.cartData.length}
+          {props.cartData?.length || 0}
         </Text>
       </View>
       <FontAwesome.Button

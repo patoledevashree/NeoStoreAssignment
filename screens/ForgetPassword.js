@@ -115,9 +115,10 @@ export default function ForgetPassword() {
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 60,
-    paddingTop: 30,
     marginVertical: 20,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     fontSize: 40,
