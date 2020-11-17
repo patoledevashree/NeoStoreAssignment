@@ -36,7 +36,7 @@ function Product(props) {
   useEffect(() => {
     props.getCategories();
     props.getColors();
-    getProducts();
+    getProducts(selectedColor, selectedPrice);
   }, []);
 
   const navigation = useNavigation();
@@ -56,7 +56,7 @@ function Product(props) {
   const [error, setError] = useState('');
   const category = props.categoryList;
 
-  const getProducts = () => {
+  const getProducts = (color, price) => {
     let item;
     if (selectedCategory.category_id) {
       item = selectedCategory;
@@ -70,9 +70,9 @@ function Product(props) {
       .get(`${baseUrl}/commonProducts`, {
         params: {
           category_id: item.category_id,
-          color_id: selectedColor.color_id,
-          sortBy: selectedPrice.sortBy,
-          sortIn: selectedPrice.sortIn,
+          color_id: color.color_id,
+          sortBy: price.sortBy,
+          sortIn: price.sortIn,
         },
       })
       .then((response) => {
@@ -87,7 +87,7 @@ function Product(props) {
         setLoading(false);
       })
       .catch((err) => {
-        console.log('Products', err.response);
+        // console.log('Products', err.response);
 
         setError('SomeThing Went wrong');
 
@@ -125,12 +125,12 @@ function Product(props) {
       });
   };
 
-  const clearColorProducts = () => {
+  const clearColorProducts = (val) => {
     let categoryId;
     {
-      selectedCategory.category_id === ''
+      val?.category_id === ''
         ? (categoryId = '')
-        : (categoryId = selectedCategory.category_id);
+        : (categoryId = val.category_id);
     }
 
     setSelectedColor({
@@ -153,6 +153,7 @@ function Product(props) {
           setProduct({});
           setDisplay([]);
         } else {
+          // console.log('response', response.data);
           setProduct(response.data);
           setDisplay(response.data.product_details.slice(0, 5));
         }
@@ -208,37 +209,26 @@ function Product(props) {
 
   const selectCategory = (val) => {
     setSelectCategory(val);
+    productByCategory(val);
   };
-
   const selectColor = (color) => {
     setSelectedColor(color);
+    productByColor(color);
   };
   const selectPrice = (val) => {
     setSelectedPrice(val);
+    productByPrice(val);
   };
   const closeModal = () => {
     setCategory(false);
-    setSelectCategory({
-      category_id: '',
-      category_name: '',
-    });
     setPrice(false);
-    setSelectedPrice({
-      sortBy: '',
-      sortIn: '',
-    });
     setColor(false);
-    setSelectedColor({
-      color_id: '',
-      color_name: '',
-      color_code: '',
-    });
   };
 
-  const productByCategory = () => {
+  const productByCategory = (val) => {
     setCategory(false);
     setLoading(true);
-    clearColorProducts();
+    clearColorProducts(val);
   };
 
   const clearCategory = () => {
@@ -250,10 +240,10 @@ function Product(props) {
     clearCategoryProducts();
   };
 
-  const productByColor = () => {
+  const productByColor = (color) => {
     setColor(false);
     setLoading(true);
-    getProducts();
+    getProducts(color, selectedPrice);
   };
 
   const clearColor = () => {
@@ -263,13 +253,13 @@ function Product(props) {
       color_name: '',
       color_code: '',
     });
-    clearColorProducts();
+    clearColorProducts(selectedCategory);
   };
 
-  const productByPrice = () => {
+  const productByPrice = (val) => {
     setPrice(false);
     setLoading(true);
-    getProducts();
+    getProducts(selectedColor, val);
   };
 
   const productByRating = () => {
@@ -485,12 +475,14 @@ function Product(props) {
           selectCategory={selectCategory}
           categoryList={category.length > 0 ? category : []}
           productByCategory={productByCategory}
+          selectedCategory={selectedCategory.category_name}
         />
         <PriceModal
           visible={priceVisible}
           closeModal={closeModal}
           selectPrice={selectPrice}
           productByPrice={productByPrice}
+          selectedPrice={selectedPrice.sortIn}
         />
         <ColorModal
           visible={colorVisible}
@@ -498,6 +490,7 @@ function Product(props) {
           selectColor={selectColor}
           colorsList={props.colors}
           productByColor={productByColor}
+          selectedColor={selectedColor}
         />
       </View>
     );

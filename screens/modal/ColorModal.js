@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, Modal, TouchableOpacity, Button} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {globalStyles} from '../../shared/Styles/modalStyles';
@@ -20,7 +20,9 @@ export default function ColorModal({
   colorsList,
   selectColor,
   productByColor,
+  selectedColor,
 }) {
+  const [color, setColor] = useState(selectedColor);
   return (
     <Modal transparent={true} visible={visible} animationType="fade">
       <View style={{backgroundColor: '#000000aa', flex: 1}}>
@@ -52,6 +54,7 @@ export default function ColorModal({
                   <View key={index}>
                     <TouchableOpacity
                       onPress={() => {
+                        setColor(item);
                         selectColor({
                           color_id: item.color_id,
                           color_name: item.color_name,
@@ -65,20 +68,25 @@ export default function ColorModal({
                           backgroundColor: item.color_code,
                           marginTop: 15,
                           marginLeft: 5,
+                          borderWidth: 1,
+                          borderColor:
+                            color.color_id === item.color_id
+                              ? 'black'
+                              : item.color_code,
                         }}></View>
                     </TouchableOpacity>
                   </View>
                 );
               })}
             </View>
-            <View style={globalStyles.button}>
+            {/* <View style={globalStyles.button}>
               <Button
                 title="Filter"
                 color={'#b8b8b8'}
                 onPress={() => {
                   productByColor();
                 }}></Button>
-            </View>
+            </View> */}
           </View>
         </View>
       </View>

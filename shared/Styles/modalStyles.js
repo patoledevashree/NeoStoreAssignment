@@ -22,7 +22,7 @@ export const globalStyles = StyleSheet.create({
     shadowColor: '#777',
     elevation: 1,
     flexDirection: 'row',
-    backgroundColor: '#b8b8b8',
+    backgroundColor: '#2874F0',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },

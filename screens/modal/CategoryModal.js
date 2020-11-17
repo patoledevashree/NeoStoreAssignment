@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -28,7 +28,10 @@ export default function CategoryModal({
   categoryList,
   selectCategory,
   productByCategory,
+  selectedCategory,
 }) {
+  const [category, setCategory] = useState(selectedCategory);
+
   return (
     <Modal transparent={true} visible={visible} animationType="fade">
       <View style={{backgroundColor: '#000000aa', flex: 1}}>
@@ -60,17 +63,30 @@ export default function CategoryModal({
                   <View key={index}>
                     <TouchableOpacity
                       onPress={() => {
+                        setCategory(item.category_name);
                         selectCategory({
                           category_id: item.category_id,
                           category_name: item.category_name,
                         });
+                        // productByCategory();
                       }}>
-                      <View style={styles.container}>
+                      <View
+                        style={{
+                          ...styles.container,
+                          backgroundColor:
+                            category === item.category_name
+                              ? '#2874F0'
+                              : '#e7e7e7',
+                        }}>
                         <Text
                           style={{
                             fontSize: 20,
                             padding: 5,
                             textAlign: 'center',
+                            color:
+                              category === item.category_name
+                                ? 'white'
+                                : 'black',
                           }}>
                           {item.category_name}
                         </Text>
@@ -80,14 +96,14 @@ export default function CategoryModal({
                 );
               })}
             </View>
-            <View style={globalStyles.button}>
+            {/* <View style={globalStyles.button}>
               <Button
                 title="Filter"
                 color={'#b8b8b8'}
                 onPress={() => {
                   productByCategory();
                 }}></Button>
-            </View>
+            </View> */}
           </View>
         </View>
       </View>
@@ -99,7 +115,6 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: '#e7e7e7',
     borderRadius: 10,
   },
 });

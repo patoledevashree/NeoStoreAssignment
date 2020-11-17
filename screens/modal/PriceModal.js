@@ -26,7 +26,9 @@ export default function PriceModal({
   closeModal,
   selectPrice,
   productByPrice,
+  selectedPrice,
 }) {
+  const [price, setPrice] = useState(selectedPrice);
   return (
     <Modal transparent={true} visible={visible} animationType="fade">
       <View style={{backgroundColor: '#000000aa', flex: 1}}>
@@ -55,12 +57,17 @@ export default function PriceModal({
             <View style={{marginTop: 10}}>
               <TouchableOpacity
                 onPress={() => {
+                  setPrice(false);
                   selectPrice({
                     sortBy: 'product_cost',
                     sortIn: false,
                   });
                 }}>
-                <View style={styles.container}>
+                <View
+                  style={{
+                    ...styles.container,
+                    backgroundColor: price === false ? '#2874F0' : '#e7e7e7',
+                  }}>
                   <Text
                     style={{
                       fontSize: 20,
@@ -74,12 +81,17 @@ export default function PriceModal({
 
               <TouchableOpacity
                 onPress={() => {
+                  setPrice(true);
                   selectPrice({
                     sortBy: 'product_cost',
                     sortIn: true,
                   });
                 }}>
-                <View style={styles.container}>
+                <View
+                  style={{
+                    ...styles.container,
+                    backgroundColor: price === true ? '#2874F0' : '#e7e7e7',
+                  }}>
                   <Text
                     style={{
                       fontSize: 20,
@@ -91,14 +103,14 @@ export default function PriceModal({
                 </View>
               </TouchableOpacity>
             </View>
-            <View style={globalStyles.button}>
+            {/* <View style={globalStyles.button}>
               <Button
                 title="Filter"
                 color={'#b8b8b8'}
                 onPress={() => {
                   productByPrice();
                 }}></Button>
-            </View>
+            </View> */}
           </View>
         </View>
       </View>
@@ -110,7 +122,7 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: '#e7e7e7',
     borderRadius: 10,
+    marginVertical: 10,
   },
 });
